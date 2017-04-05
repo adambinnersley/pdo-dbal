@@ -1,7 +1,7 @@
 {
     "name": "adamb7586/database",
     "description": "A simple PDO Wrapper to connect to a database",
-	"keywords": ["PDO", "database", "db", "wrapper"],
+    "keywords": ["PDO", "database", "db", "wrapper"],
     "type": "library",
     "license": "MIT",
 	"homepage": "https://github.com/AdamB7586/pdo-dbal",
@@ -18,5 +18,5 @@
         "psr-4": {
             "DBAL\\": "src/"
         }
-    },
+    }
 }
