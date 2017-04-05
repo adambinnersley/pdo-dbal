@@ -1,4 +1,6 @@
 <?php
+namespace DBAL;
+
 interface DB{
     public function query($sql);
     public function select($table);
