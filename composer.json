@@ -1,0 +1,20 @@
+{
+    "name": "adamb7586/database",
+    "description": "A simple PDO Wrapper to connect to a database",
+    "type": "library, wrapper, pdo, mysql",
+    "license": "MIT",
+	"homepage": "https://github.com/AdamB7586/pdo-dbal",
+    "authors": [
+        {
+            "name": "Adam Binnersley",
+            "email": "abinnersley@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.0"
+	},
+	"autoload": {
+    	"files": ["src/database.php"]
+	}
+}
