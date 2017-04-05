@@ -1,6 +1,8 @@
 <?php
 namespace DBAL;
 
+use PDO;
+
 interface DB{
     public function query($sql);
     public function select($table);
