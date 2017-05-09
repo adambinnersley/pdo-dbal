@@ -44,11 +44,12 @@ final class Database implements DB{
      * @param string $database This should be the database that you wish to connect to
      * @return void
      */
-    public function __construct($hostname, $username, $password, $database){
+    public function __construct($hostname, $username, $password, $database, $backuphost = NULL){
         try{
             $this->db = new PDO('mysql:host='.$hostname.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
         }
         catch(Exception $e){
+            if($backuphost != NULL){$this->backupMySQLServer($username, $password, $database, $backuphost);}
             $this->error($e);
         }
     }
@@ -58,6 +59,19 @@ final class Database implements DB{
      */
     public function __destruct(){
         $this->closeDatabase();
+    }
+    
+    /**
+     * Connect to the backup database using PDO connection if the first database is down
+     * @param string $username This should be the username for the chosen database
+     * @param string $password This should be the password for the chosen database 
+     * @param string $database This should be the database that you wish to connect to
+     * @param string $hostname The hostname for the backup database
+     */
+    public function backupMySQLServer($username, $password, $database, $hostname){
+        if(!$this->db){
+            $this->db = new PDO('mysql:host='.$hostname.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
+        }
     }
 	
     /**
