@@ -49,7 +49,9 @@ final class Database implements DB{
             $this->db = new PDO('mysql:host='.$hostname.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
         }
         catch(Exception $e){
-            if($backuphost != NULL){$this->backupMySQLServer($username, $password, $database, $backuphost);}
+            if($backuphost != NULL){
+                $this->backupMySQLServer($username, $password, $database, $backuphost);
+            }
             $this->error($e);
         }
     }
