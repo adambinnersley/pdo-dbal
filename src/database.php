@@ -1,4 +1,6 @@
 <?php
+namespace DBAL;
+
 use PDO;
 
 interface DB{
