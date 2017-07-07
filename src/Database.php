@@ -3,28 +3,13 @@ namespace DBAL;
 
 use PDO;
 
-interface DB{
-    public function query($sql);
-    public function select($table);
-    public function selectAll($table);
-    public function insert($table, $records);
-    public function update($table, $records);
-    public function delete($table, $where);
-    public function count($table);
-    public function truncate($table);
-    
-    public function numRows();
-    public function rowCount();
-    public function lastInsertId();
-}
-
 /**
  * PDO Database connection class
  *
  * @author Adam Binnersley <abinnersley@gmail.com>
  * @version PDO Database Class 1.0.1
  */
-final class Database implements DB{
+final class Database implements DBInteface{
     public $db;
     public $sql;
     
