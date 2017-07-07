@@ -17,6 +17,9 @@ final class Database implements DBInteface{
     public $logErrors = true;
     public $logQueries = false;
     public $displayErrors = false;
+    
+    protected $cachingEnabled = false;
+    protected $cacheObj;
 
     private $query;
     private $values = array();
@@ -27,15 +30,16 @@ final class Database implements DBInteface{
      * @param string $username This should be the username for the chosen database
      * @param string $password This should be the password for the chosen database 
      * @param string $database This should be the database that you wish to connect to
+     * @param string|null $backuphost If you have a replication server set up put the hostname or IP address incase the primary server goes down
      * @return void
      */
     public function __construct($hostname, $username, $password, $database, $backuphost = NULL){
         try{
-            $this->db = new PDO('mysql:host='.$hostname.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
+            $this->connectToServer($username, $password, $database, $hostname);
         }
         catch(Exception $e){
             if($backuphost != NULL){
-                $this->backupMySQLServer($username, $password, $database, $backuphost);
+                $this->connectToServer($username, $password, $database, $backuphost);
             }
             $this->error($e);
         }
@@ -49,13 +53,13 @@ final class Database implements DBInteface{
     }
     
     /**
-     * Connect to the backup database using PDO connection if the first database is down
+     * Connect to the database using PDO connection
      * @param string $username This should be the username for the chosen database
      * @param string $password This should be the password for the chosen database 
      * @param string $database This should be the database that you wish to connect to
-     * @param string $hostname The hostname for the backup database
+     * @param string $hostname The hostname for the database
      */
-    public function backupMySQLServer($username, $password, $database, $hostname){
+    protected function connectToServer($username, $password, $database, $hostname){
         if(!$this->db){
             $this->db = new PDO('mysql:host='.$hostname.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
         }
