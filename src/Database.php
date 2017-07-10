@@ -9,7 +9,7 @@ use PDO;
  * @author Adam Binnersley <abinnersley@gmail.com>
  * @version PDO Database Class 1.0.1
  */
-final class Database implements DBInteface{
+final class Database implements DBInterface{
     public $db;
     public $sql;
     
