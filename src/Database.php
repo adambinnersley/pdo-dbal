@@ -46,6 +46,7 @@ final class Database implements DBInteface{
             }
             $this->error($e);
         }
+        return $this;
     }
     
     /**
@@ -67,6 +68,18 @@ final class Database implements DBInteface{
             $this->database = $database;
             $this->db = new PDO('mysql:host='.$hostname.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
         }
+    }
+    
+    /**
+     * Enables the caching and set the caching object to the one provided
+     * @param object $caching This should be class of the type of caching you are using
+     */
+    public function setCaching($caching){
+        if(is_object($caching)){
+            $this->cacheObj = $caching;
+            $this->cacheEnabled = true;
+        }
+        return $this;
     }
 	
     /**
