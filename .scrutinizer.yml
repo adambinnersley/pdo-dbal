@@ -1,0 +1,11 @@
+build:
+    environment:
+        php: '5.6.0'
+
+before_commands:
+- "composer install --prefer-source"
+
+checks:
+    php:
+        code_rating: true
+        duplication: true
