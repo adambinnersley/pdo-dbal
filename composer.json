@@ -1,6 +1,5 @@
 {
     "name": "adamb7586/database",
-    "version": "1.0.6",
     "description": "A simple PDO Wrapper to connect to a database",
     "keywords": ["PDO", "database", "db", "wrapper"],
     "type": "library",
