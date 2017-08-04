@@ -1,4 +1,4 @@
 /nbproject/
 /vendor/
-/composer.lock
-/.gitignore
+composer.lock
+.gitignore
