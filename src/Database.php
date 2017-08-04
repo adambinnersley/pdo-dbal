@@ -12,6 +12,7 @@ use PDO;
 final class Database implements DBInterface{
     public $db;
     public $sql;
+    private $key;
     
     public $logLocation = 'logs'.DIRECTORY_SEPARATOR;
     public $logErrors = true;
@@ -188,19 +189,8 @@ final class Database implements DBInterface{
      * @return array Returns a multidimensional array with the chosen fields from the table
      */
     public function selectAll($table, $where = '', $fields = '*', $order = '', $limit = 0, $cache = true){        
-        if(is_array($fields)){
-            foreach($fields as $field => $value){
-                $selectfields[] = sprintf("`%s`", $value);
-            }
-            $fields = implode(', ', $selectfields);
-        }
-        
-        unset($this->values);
-        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fields, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
-        $key = md5($this->database.$this->sql.serialize($this->values));
-        
-        if($this->logQueries){$this->writeQueryToLog();}
-        if($cache && $this->cacheEnabled && $this->getCache($key)){
+        $this->buildSelectQuery($table, $where, $fields, $order, $limit);
+        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
             return $this->cacheValue;
         }
         else{
@@ -213,9 +203,43 @@ final class Database implements DBInterface{
             }
             if($limit === 1){$result = $this->query->fetch(PDO::FETCH_ASSOC);} // Reduce the memory usage if only one record and increase performance
             else{$result = $this->query->fetchAll(PDO::FETCH_ASSOC);}
-            if($cache && $this->cacheEnabled){$this->setCache($key, $result);}
+            if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
             return $result;
         }
+    }
+    
+    public function selectColumn($table, $where = '', $fields = '*', $num = 0, $order = '', $cache = true){
+        $this->buildSelectQuery($table, $where, $fields, $order, 1);
+        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
+            return $this->cacheValue;
+        }
+        else{
+            try{
+                $this->query = $this->db->prepare($this->sql);
+                $this->query->execute($this->values);
+            }
+            catch(Exception $e){
+                $this->error($e);
+            }
+            $result = $this->query->fetchColumn(intval($num));
+            if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
+            return $result;
+        }
+    }
+    
+    protected function buildSelectQuery($table, $where = '', $fields = '*', $order = '', $limit = 0){
+        if(is_array($fields)){
+            foreach($fields as $field => $value){
+                $selectfields[] = sprintf("`%s`", $value);
+            }
+            $fields = implode(', ', $selectfields);
+        }
+        
+        unset($this->values);
+        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fields, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
+        $this->key = md5($this->database.$this->sql.serialize($this->values));
+        
+        if($this->logQueries){$this->writeQueryToLog();}
     }
     
     /**
@@ -301,10 +325,10 @@ final class Database implements DBInterface{
     public function count($table, $where = '', $cache = true){
         unset($this->values);
         $this->sql = sprintf("SELECT count(*) FROM `%s`%s;", $table, $this->where($where));
-        $key = md5($this->database.$this->sql.serialize($this->values));
+        $this->key = md5($this->database.$this->sql.serialize($this->values));
         
         if($this->logQueries){$this->writeQueryToLog();}
-        if($cache && $this->cacheEnabled && $this->getCache($key)){
+        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
             return $this->cacheValue;
         }
         else{
@@ -316,7 +340,7 @@ final class Database implements DBInterface{
                 $this->error($e);
             }
             $result = $this->query->fetchColumn();
-            if($cache && $this->cacheEnabled){$this->setCache($key, $result);}
+            if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
             return $result;
         }
     }
