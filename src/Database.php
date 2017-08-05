@@ -46,7 +46,6 @@ final class Database implements DBInterface{
             }
             $this->error($e);
         }
-        return $this;
     }
     
     /**
