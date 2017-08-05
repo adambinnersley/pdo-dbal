@@ -85,7 +85,7 @@ final class Database implements DBInterface{
     /**
      * This outputs the SQL where query based on a given array
      * @param array $where This should be an array that you wish to create the where query for in the for array('field1' => 'test') or array('field1' => array('>=', 0))
-     * @return string|boolean If the where query is an array will return the where string and set the values else returns false if no array sent
+     * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
      */
     private function where($where){
         if(is_array($where)){
@@ -114,7 +114,7 @@ final class Database implements DBInterface{
     /**
      * Sets the order sting for the SQL query based on an array or string
      * @param array|string $order This should be either set to array('fieldname' => 'ASC/DESC') or RAND()
-     * @return string|boolean If the SQL query has an valid order by will return a string else returns false
+     * @return string|false If the SQL query has an valid order by will return a string else returns false
      */
     private function orderBy($order){
         if(is_array($order)){
@@ -130,8 +130,8 @@ final class Database implements DBInterface{
     
     /**
      * Returns the limit SQL for the current query as a string
-     * @param int|array $limit This should either be set as an integer or should be set as an array with a start and end value  
-     * @return string|boolean Will return the LIMIT string for the current query if it is valid else returns false
+     * @param integer|array $limit This should either be set as an integer or should be set as an array with a start and end value  
+     * @return string|false Will return the LIMIT string for the current query if it is valid else returns false
      */
     private function limit($limit = 0){
         if(is_array($limit)){
@@ -170,7 +170,7 @@ final class Database implements DBInterface{
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
      * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
-     * @param int|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
      */
     protected function buildSelectQuery($table, $where = '', $fields = '*', $order = '', $limit = 0){
         if(is_array($fields)){
@@ -206,7 +206,7 @@ final class Database implements DBInterface{
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
      * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
-     * @param int|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
      * @return array Returns a multidimensional array with the chosen fields from the table
      */
@@ -443,7 +443,7 @@ final class Database implements DBInterface{
     
     /**
      * Displays the error massage which occurs
-     * @param object $error This should be an instance of Exception
+     * @param \Exception $error This should be an instance of Exception
      */
     private function error($error){
         if($this->logErrors){
