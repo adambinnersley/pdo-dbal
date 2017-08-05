@@ -166,6 +166,29 @@ final class Database implements DBInterface{
     }
     
     /**
+     * Build the SQL query but doesn't execute it
+     * @param string $table This should be the table you wish to select the values from
+     * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+     * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+     * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
+     * @param int|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+     */
+    protected function buildSelectQuery($table, $where = '', $fields = '*', $order = '', $limit = 0){
+        if(is_array($fields)){
+            foreach($fields as $field => $value){
+                $selectfields[] = sprintf("`%s`", $value);
+            }
+            $fields = implode(', ', $selectfields);
+        }
+        
+        unset($this->values);
+        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fields, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
+        $this->key = md5($this->database.$this->sql.serialize($this->values));
+        
+        if($this->logQueries){$this->writeQueryToLog();}
+    }
+    
+    /**
      * Returns a single record for a select query for the chosen table
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
@@ -208,7 +231,17 @@ final class Database implements DBInterface{
         }
     }
     
-    public function selectColumn($table, $where = '', $fields = '*', $num = 0, $order = '', $cache = true){
+    /**
+     * Returns a single column value for a given query
+     * @param string $table This should be the table you wish to select the values from
+     * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+     * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+     * @param int $colNum This should be the column number you wish to get (starts at 0)
+     * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
+     * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
+     * @return mixed If a result is found will return the value of the colum given else will return false
+     */
+    public function fetchColumn($table, $where = '', $fields = '*', $colNum = 0, $order = '', $cache = true){
         $this->buildSelectQuery($table, $where, $fields, $order, 1);
         if($cache && $this->cacheEnabled && $this->getCache($this->key)){
             return $this->cacheValue;
@@ -221,25 +254,10 @@ final class Database implements DBInterface{
             catch(Exception $e){
                 $this->error($e);
             }
-            $result = $this->query->fetchColumn(intval($num));
+            $result = $this->query->fetchColumn(intval($colNum));
             if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
             return $result;
         }
-    }
-    
-    protected function buildSelectQuery($table, $where = '', $fields = '*', $order = '', $limit = 0){
-        if(is_array($fields)){
-            foreach($fields as $field => $value){
-                $selectfields[] = sprintf("`%s`", $value);
-            }
-            $fields = implode(', ', $selectfields);
-        }
-        
-        unset($this->values);
-        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fields, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
-        $this->key = md5($this->database.$this->sql.serialize($this->values));
-        
-        if($this->logQueries){$this->writeQueryToLog();}
     }
     
     /**
