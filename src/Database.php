@@ -239,7 +239,7 @@ final class Database implements DBInterface{
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
      * @param array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param int $colNum This should be the column number you wish to get (starts at 0)
-     * @param string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
+     * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
      * @return mixed If a result is found will return the value of the colum given else will return false
      */
@@ -269,6 +269,10 @@ final class Database implements DBInterface{
      * @return boolean If data is inserted returns true else returns false
      */
     public function insert($table, $records){
+        $fields = array();
+        $prepare[] = array();
+        $values[] = array();
+        
         foreach($records as $field => $value){
             $fields[] = sprintf("`%s`", $field);
             $prepare[] = '?';
@@ -484,7 +488,7 @@ final class Database implements DBInterface{
      * @param mixed $value The value of the MYSQL query 
      */
     public function setCache($key, $value){
-        if($this->activeCache){
+        if($this->cacheEnabled){
             $this->cacheObj->save($key, $value);
         }
     }
@@ -495,10 +499,10 @@ final class Database implements DBInterface{
      * @return mixed Returned the cached results from
      */
     public function getCache($key){
-        if($this->modified === true || !$this->cachingEnabled){return false;}
+        if($this->modified === true || !$this->cacheEnabled){return false;}
         else{
-            $this->cachedValue = $this->cacheObj->fetch($key);
-            return $this->cachedValue;
+            $this->cacheValue = $this->cacheObj->fetch($key);
+            return $this->cacheValue;
         }
     }
     
