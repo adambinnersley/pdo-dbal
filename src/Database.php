@@ -35,13 +35,12 @@ final class Database implements DBInterface{
      * @param string $password This should be the password for the chosen database 
      * @param string $database This should be the database that you wish to connect to
      * @param string|null $backuphost If you have a replication server set up put the hostname or IP address incase the primary server goes down
-     * @return void
      */
     public function __construct($hostname, $username, $password, $database, $backuphost = NULL){
         try{
             $this->connectToServer($username, $password, $database, $hostname);
         }
-        catch(Exception $e){
+        catch(\Exception $e){
             if($backuphost != NULL){
                 $this->connectToServer($username, $password, $database, $backuphost);
             }
@@ -160,7 +159,7 @@ final class Database implements DBInterface{
                 return $this->query->fetchAll(PDO::FETCH_ASSOC);
             }
         }
-        catch(Exception $e){
+        catch(\Exception $e){
             $this->error($e);
         }
     }
@@ -221,7 +220,7 @@ final class Database implements DBInterface{
                 $this->query = $this->db->prepare($this->sql);
                 $this->query->execute($this->values);
             }
-            catch(Exception $e){
+            catch(\Exception $e){
                 $this->error($e);
             }
             if($limit === 1){$result = $this->query->fetch(PDO::FETCH_ASSOC);} // Reduce the memory usage if only one record and increase performance
@@ -251,7 +250,7 @@ final class Database implements DBInterface{
                 $this->query = $this->db->prepare($this->sql);
                 $this->query->execute($this->values);
             }
-            catch(Exception $e){
+            catch(\Exception $e){
                 $this->error($e);
             }
             $result = $this->query->fetchColumn(intval($colNum));
@@ -280,7 +279,7 @@ final class Database implements DBInterface{
             $this->query = $this->db->prepare($this->sql);
             $this->query->execute($values);
         }
-        catch(Exception $e){
+        catch(\Exception $e){
             $this->error($e);
         }
         return $this->numRows() ? true : false;
@@ -307,7 +306,7 @@ final class Database implements DBInterface{
             $this->query = $this->db->prepare($this->sql);
             $this->query->execute($this->values);
         }
-        catch(Exception $e){
+        catch(\Exception $e){
             $this->error($e);
         }
         return $this->numRows() ? true : false;
@@ -327,7 +326,7 @@ final class Database implements DBInterface{
             $this->query = $this->db->prepare($this->sql);
             $this->query->execute($this->values);
         }
-        catch(Exception $e){
+        catch(\Exception $e){
             $this->error($e);
         }
         return $this->numRows() ? true : false;
@@ -354,7 +353,7 @@ final class Database implements DBInterface{
                 $this->query = $this->db->prepare($this->sql);
                 $this->query->execute($this->values);
             }
-            catch(Exception $e){
+            catch(\Exception $e){
                 $this->error($e);
             }
             $result = $this->query->fetchColumn();
@@ -373,7 +372,7 @@ final class Database implements DBInterface{
             $this->sql = sprintf("TRUNCATE TABLE `%s`", $table);
             $this->query = $this->db->exec($this->sql);
         }
-        catch(Exception $e){
+        catch(\Exception $e){
             $this->error($e);
         }
         return $this->query ? true : false;
@@ -422,7 +421,7 @@ final class Database implements DBInterface{
                 $this->sql = sprintf("SHOW INDEX FROM %s;",  $table);
                 $this->query = $this->db->exec($this->sql);
             }
-            catch(Exception $e){
+            catch(\Exception $e){
                 $this->error($e);
             }
             
