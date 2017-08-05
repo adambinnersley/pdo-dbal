@@ -89,6 +89,7 @@ final class Database implements DBInterface{
      */
     private function where($where){
         if(is_array($where)){
+            $wherefields = array();
             foreach($where as $what => $value){
                 if(is_array($value)){
                     if($value[1] == 'NULL' || $value[1] == 'NOT NULL'){
@@ -335,11 +336,11 @@ final class Database implements DBInterface{
     /**
      * Count the number of return results 
      * @param string $table The table you wish to count the result of 
-     * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+     * @param array|false $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
      * @return int Returns the number of results
      */
-    public function count($table, $where = '', $cache = true){
+    public function count($table, $where = false, $cache = true){
         unset($this->values);
         $this->sql = sprintf("SELECT count(*) FROM `%s`%s;", $table, $this->where($where));
         $this->key = md5($this->database.$this->sql.serialize($this->values));
@@ -412,6 +413,7 @@ final class Database implements DBInterface{
      * @return array Returns the table index for the selected table as an array 
      */
     public function fulltextIndex($table){
+        $fieldlist = array();
         if(is_array($table)){
             foreach($table as $name){
                 $fieldlist[$name] = $this->fulltextIndex($name);
