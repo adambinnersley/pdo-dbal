@@ -270,8 +270,8 @@ final class Database implements DBInterface{
      */
     public function insert($table, $records){
         $fields = array();
-        $prepare[] = array();
-        $values[] = array();
+        $prepare = array();
+        $values = array();
         
         foreach($records as $field => $value){
             $fields[] = sprintf("`%s`", $field);
