@@ -42,7 +42,7 @@ class RedisCache implements CacheInterface{
      * @return $this
      */
     public function addServer($host, $port, $persistent = false){
-        if($persistent == false){
+        if($persistent === false){
             $this->cache->connect($host, intval($port));
         }
         else{

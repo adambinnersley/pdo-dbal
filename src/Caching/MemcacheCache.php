@@ -32,7 +32,7 @@ class MemcacheCache implements CacheInterface{
      * @return $this
      */
     public function connect($host, $port, $persistent = false){
-        if($persistent == false){
+        if($persistent === false){
             $this->cache->connect($host, intval($port));
         }
         else{
