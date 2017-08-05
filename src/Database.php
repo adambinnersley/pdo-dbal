@@ -389,7 +389,7 @@ final class Database implements DBInterface{
         if(isset($this->query)){
             return $this->query->rowCount();
         }
-        return false;
+        return 0;
     }
     
     /**
@@ -495,7 +495,7 @@ final class Database implements DBInterface{
      * @return mixed Returned the cached results from
      */
     public function getCache($key){
-        if($this->modified == true || !$this->cachingEnabled){return false;}
+        if($this->modified === true || !$this->cachingEnabled){return false;}
         else{
             $this->cachedValue = $this->cacheObj->fetch($key);
             return $this->cachedValue;
