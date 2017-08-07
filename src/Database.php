@@ -185,8 +185,27 @@ final class Database implements DBInterface{
         unset($this->values);
         $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fieldList, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
         $this->key = md5($this->database.$this->sql.serialize($this->values));
-        
+    }
+    
+    /**
+     * Execute the current query if no cache value is available
+     * @param boolean $cache If the cache should be checked for the checked for the values of the query set to true else set to false 
+     * @return mixed If a cached value exists will be returned else if cache is not checked and query is executed will not return anything
+     */
+    protected function executeQuery($cache = true){
         if($this->logQueries){$this->writeQueryToLog();}
+        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
+            return $this->cacheValue;
+        }
+        else{
+            try{
+                $this->query = $this->db->prepare($this->sql);
+                $this->query->execute($this->values);
+            }
+            catch(\Exception $e){
+                $this->error($e);
+            }
+        }
     }
     
     /**
@@ -214,22 +233,13 @@ final class Database implements DBInterface{
      */
     public function selectAll($table, $where = array(), $fields = '*', $order = array(), $limit = 0, $cache = true){        
         $this->buildSelectQuery($table, $where, $fields, $order, $limit);
-        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
-            return $this->cacheValue;
-        }
-        else{
-            try{
-                $this->query = $this->db->prepare($this->sql);
-                $this->query->execute($this->values);
-            }
-            catch(\Exception $e){
-                $this->error($e);
-            }
+        $result = $this->executeQuery($cache);
+        if(!$result){
             if($limit === 1){$result = $this->query->fetch(PDO::FETCH_ASSOC);} // Reduce the memory usage if only one record and increase performance
             else{$result = $this->query->fetchAll(PDO::FETCH_ASSOC);}
             if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
-            return $result;
         }
+        return $result;
     }
     
     /**
@@ -244,21 +254,12 @@ final class Database implements DBInterface{
      */
     public function fetchColumn($table, $where = array(), $fields = '*', $colNum = 0, $order = array(), $cache = true){
         $this->buildSelectQuery($table, $where, $fields, $order, 1);
-        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
-            return $this->cacheValue;
-        }
-        else{
-            try{
-                $this->query = $this->db->prepare($this->sql);
-                $this->query->execute($this->values);
-            }
-            catch(\Exception $e){
-                $this->error($e);
-            }
+        $result = $this->executeQuery($cache);
+        if(!$result){
             $result = $this->query->fetchColumn(intval($colNum));
             if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
-            return $result;
         }
+        return $result;
     }
     
     /**
@@ -307,16 +308,8 @@ final class Database implements DBInterface{
             $fields[] = sprintf("`%s` = ?", $field);
             $this->values[] = $value;
         }
-        
-        try{
-            $this->sql = sprintf("UPDATE `%s` SET %s %s%s;", $table, implode(', ', $fields), $this->where($where), $this->limit($limit));
-            if($this->logQueries){$this->writeQueryToLog();}
-            $this->query = $this->db->prepare($this->sql);
-            $this->query->execute($this->values);
-        }
-        catch(\Exception $e){
-            $this->error($e);
-        }
+        $this->sql = sprintf("UPDATE `%s` SET %s %s%s;", $table, implode(', ', $fields), $this->where($where), $this->limit($limit));
+        $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
     
@@ -326,17 +319,10 @@ final class Database implements DBInterface{
      * @param array $where This should be an array of for the where statement
      * @param int $limit The number of results you want to return 0 is default and will delete all results that match the query, else should be formated as a standard integer
      */
-    public function delete($table, $where, $limit = 0){       
-        try{
-            unset($this->values);
-            $this->sql = sprintf("DELETE FROM `%s` %s%s;", $table, $this->where($where), $this->limit($limit));
-            if($this->logQueries){$this->writeQueryToLog();}
-            $this->query = $this->db->prepare($this->sql);
-            $this->query->execute($this->values);
-        }
-        catch(\Exception $e){
-            $this->error($e);
-        }
+    public function delete($table, $where, $limit = 0){
+        unset($this->values);
+        $this->sql = sprintf("DELETE FROM `%s` %s%s;", $table, $this->where($where), $this->limit($limit));
+        $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
     
@@ -352,22 +338,12 @@ final class Database implements DBInterface{
         $this->sql = sprintf("SELECT count(*) FROM `%s`%s;", $table, $this->where($where));
         $this->key = md5($this->database.$this->sql.serialize($this->values));
         
-        if($this->logQueries){$this->writeQueryToLog();}
-        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
-            return $this->cacheValue;
-        }
-        else{
-            try{
-                $this->query = $this->db->prepare($this->sql);
-                $this->query->execute($this->values);
-            }
-            catch(\Exception $e){
-                $this->error($e);
-            }
+        $result = $this->executeQuery($cache);
+        if(!$result){
             $result = $this->query->fetchColumn();
             if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
-            return $result;
         }
+        return $result;
     }
     
     /**
