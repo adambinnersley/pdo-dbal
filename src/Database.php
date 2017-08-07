@@ -225,26 +225,18 @@ final class Database implements DBInterface{
      * @return boolean If data is inserted returns true else returns false
      */
     public function insert($table, $records){
+        unset($this->values);
         $fields = array();
         $prepare = array();
-        $values = array();
         
         foreach($records as $field => $value){
             $fields[] = sprintf("`%s`", $field);
             $prepare[] = '?';
-            $values[] = $value;
+            $this->values[] = $value;
         }
         
-        try{
-            unset($this->values);
-            $this->sql = sprintf("INSERT INTO `%s` (%s) VALUES (%s);", $table, implode(', ', $fields), implode(', ', $prepare));
-            if($this->logQueries){$this->writeQueryToLog();}
-            $this->query = $this->db->prepare($this->sql);
-            $this->query->execute($values);
-        }
-        catch(\Exception $e){
-            $this->error($e);
-        }
+        $this->sql = sprintf("INSERT INTO `%s` (%s) VALUES (%s);", $table, implode(', ', $fields), implode(', ', $prepare));
+        $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
     
