@@ -33,7 +33,7 @@ class XcacheCache implements CacheInterface{
      * @return boolean Returns true if successfully added or false on failure
      */
     public function save($key, $value, $time = 0){
-        return xcache_set($ket, $value, intval($time));
+        return xcache_set($key, $value, intval($time));
     }
     
     
