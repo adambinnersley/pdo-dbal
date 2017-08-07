@@ -27,6 +27,7 @@ final class Database implements DBInterface{
 
     private $query;
     private $values = array();
+    private $prepare = array();
 
     /**
      * Connect to database using PDO connection
@@ -79,70 +80,6 @@ final class Database implements DBInterface{
             $this->cacheEnabled = true;
         }
         return $this;
-    }
-	
-    /**
-     * This outputs the SQL where query based on a given array
-     * @param array $where This should be an array that you wish to create the where query for in the for array('field1' => 'test') or array('field1' => array('>=', 0))
-     * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
-     */
-    private function where($where){
-        if(is_array($where)){
-            $wherefields = array();
-            foreach($where as $what => $value){
-                if(is_array($value)){
-                    if($value[1] == 'NULL' || $value[1] == 'NOT NULL'){
-                        $wherefields[] = sprintf("`%s` %s %s", $what, addslashes($value[0]), $value[1]);
-                    }
-                    else{
-                        $wherefields[] = sprintf("`%s` %s ?", $what, addslashes($value[0]));
-                        $this->values[] = $value[1];
-                    }
-                }
-                else{
-                    $wherefields[] = sprintf("`%s` = ?", $what);
-                    $this->values[] = $value;
-                }
-            }
-            if(!empty($wherefields)){
-                return " WHERE ".implode(' AND ', $wherefields);
-            }
-        }
-        return false;
-    }
-    
-    /**
-     * Sets the order sting for the SQL query based on an array or string
-     * @param array|string $order This should be either set to array('fieldname' => 'ASC/DESC') or RAND()
-     * @return string|false If the SQL query has an valid order by will return a string else returns false
-     */
-    private function orderBy($order){
-        if(is_array($order)){
-            foreach($order as $fieldorder => $fieldvalue){
-                return sprintf(" ORDER BY `%s` %s", $fieldorder, strtoupper($fieldvalue));
-            }
-        }
-        elseif($order == 'RAND()'){
-            return " ORDER BY RAND()";
-        }
-        return false;
-    }
-    
-    /**
-     * Returns the limit SQL for the current query as a string
-     * @param integer|array $limit This should either be set as an integer or should be set as an array with a start and end value  
-     * @return string|false Will return the LIMIT string for the current query if it is valid else returns false
-     */
-    private function limit($limit = 0){
-        if(is_array($limit)){
-            foreach($limit as $start => $end){
-                 return " LIMIT ".(int)$start.", ".(int)$end;
-            }
-        }
-        elseif((int)$limit > 0){
-            return " LIMIT ".(int)$limit;
-        }
-        return false;
     }
     
     /**
@@ -226,16 +163,9 @@ final class Database implements DBInterface{
      */
     public function insert($table, $records){
         unset($this->values);
-        $fields = array();
-        $prepare = array();
+        unset($this->prepare);
         
-        foreach($records as $field => $value){
-            $fields[] = sprintf("`%s`", $field);
-            $prepare[] = '?';
-            $this->values[] = $value;
-        }
-        
-        $this->sql = sprintf("INSERT INTO `%s` (%s) VALUES (%s);", $table, implode(', ', $fields), implode(', ', $prepare));
+        $this->sql = sprintf("INSERT INTO `%s` (%s) VALUES (%s);", $table, $this->fields($records, true), implode(', ', $this->prepare));
         $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
@@ -250,13 +180,7 @@ final class Database implements DBInterface{
      */
     public function update($table, $records, $where = array(), $limit = 0){
         unset($this->values);
-        $fields = array();
-        
-        foreach($records as $field => $value){
-            $fields[] = sprintf("`%s` = ?", $field);
-            $this->values[] = $value;
-        }
-        $this->sql = sprintf("UPDATE `%s` SET %s %s%s;", $table, implode(', ', $fields), $this->where($where), $this->limit($limit));
+        $this->sql = sprintf("UPDATE `%s` SET %s %s%s;", $table, $this->fields($records), $this->where($where), $this->limit($limit));
         $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
@@ -450,6 +374,93 @@ final class Database implements DBInterface{
             }
         }
     }
+	
+    /**
+     * This outputs the SQL where query based on a given array
+     * @param array $where This should be an array that you wish to create the where query for in the for array('field1' => 'test') or array('field1' => array('>=', 0))
+     * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
+     */
+    private function where($where){
+        if(is_array($where)){
+            $wherefields = array();
+            foreach($where as $what => $value){
+                if(is_array($value)){
+                    if($value[1] == 'NULL' || $value[1] == 'NOT NULL'){
+                        $wherefields[] = sprintf("`%s` %s %s", $what, addslashes($value[0]), $value[1]);
+                    }
+                    else{
+                        $wherefields[] = sprintf("`%s` %s ?", $what, addslashes($value[0]));
+                        $this->values[] = $value[1];
+                    }
+                }
+                else{
+                    $wherefields[] = sprintf("`%s` = ?", $what);
+                    $this->values[] = $value;
+                }
+            }
+            if(!empty($wherefields)){
+                return " WHERE ".implode(' AND ', $wherefields);
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Sets the order sting for the SQL query based on an array or string
+     * @param array|string $order This should be either set to array('fieldname' => 'ASC/DESC') or RAND()
+     * @return string|false If the SQL query has an valid order by will return a string else returns false
+     */
+    private function orderBy($order){
+        if(is_array($order)){
+            foreach($order as $fieldorder => $fieldvalue){
+                return sprintf(" ORDER BY `%s` %s", $fieldorder, strtoupper($fieldvalue));
+            }
+        }
+        elseif($order == 'RAND()'){
+            return " ORDER BY RAND()";
+        }
+        return false;
+    }
+    
+    /**
+     * Build the field list for the query
+     * @param array $records This should be an array listing all of the fields
+     * @param boolean $insert If this is an insert statement should be set to true to create the correct amount of queries for the prepared statement
+     * @return string The fields list will be returned as a string to insert into the SQL query
+     */
+    private function fields($records, $insert = false){
+        $fields = array();
+        
+        foreach($records as $field => $value){
+            if($insert === true){
+                $fields[] = sprintf("`%s`", $field);
+                $this->prepare[] = '?';
+            }
+            else{
+                $fields[] = sprintf("`%s` = ?", $field);
+            }
+            $this->values[] = $value;
+        }
+        return implode(', ', $fields);
+    }
+    
+    /**
+     * Returns the limit SQL for the current query as a string
+     * @param integer|array $limit This should either be set as an integer or should be set as an array with a start and end value  
+     * @return string|false Will return the LIMIT string for the current query if it is valid else returns false
+     */
+    private function limit($limit = 0){
+        if(is_array($limit)){
+            foreach($limit as $start => $end){
+                 return " LIMIT ".(int)$start.", ".(int)$end;
+            }
+        }
+        elseif((int)$limit > 0){
+            return " LIMIT ".(int)$limit;
+        }
+        return false;
+    }
+    
     
     /**
      * Set the cache with a key and value
