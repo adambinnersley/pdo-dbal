@@ -162,7 +162,6 @@ final class Database implements DBInterface{
      * @return boolean If data is inserted returns true else returns false
      */
     public function insert($table, $records){
-        unset($this->values);
         unset($this->prepare);
         
         $this->sql = sprintf("INSERT INTO `%s` (%s) VALUES (%s);", $table, $this->fields($records, true), implode(', ', $this->prepare));
@@ -179,7 +178,6 @@ final class Database implements DBInterface{
      * @return boolean Returns true if update is successful else returns false
      */
     public function update($table, $records, $where = array(), $limit = 0){
-        unset($this->values);
         $this->sql = sprintf("UPDATE `%s` SET %s %s%s;", $table, $this->fields($records), $this->where($where), $this->limit($limit));
         $this->executeQuery(false);
         return $this->numRows() ? true : false;
@@ -192,7 +190,6 @@ final class Database implements DBInterface{
      * @param int $limit The number of results you want to return 0 is default and will delete all results that match the query, else should be formated as a standard integer
      */
     public function delete($table, $where, $limit = 0){
-        unset($this->values);
         $this->sql = sprintf("DELETE FROM `%s` %s%s;", $table, $this->where($where), $this->limit($limit));
         $this->executeQuery(false);
         return $this->numRows() ? true : false;
@@ -206,7 +203,6 @@ final class Database implements DBInterface{
      * @return int Returns the number of results
      */
     public function count($table, $where = array(), $cache = true){
-        unset($this->values);
         $this->sql = sprintf("SELECT count(*) FROM `%s`%s;", $table, $this->where($where));
         $this->key = md5($this->database.$this->sql.serialize($this->values));
         
@@ -349,7 +345,6 @@ final class Database implements DBInterface{
         }
         else{$fieldList = '*';}
         
-        unset($this->values);
         $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fieldList, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
         $this->key = md5($this->database.$this->sql.serialize($this->values));
     }
@@ -367,6 +362,7 @@ final class Database implements DBInterface{
         try{
             $this->query = $this->db->prepare($this->sql);
             $this->query->execute($this->values);
+            unset($this->values);
         }
         catch(\Exception $e){
             $this->error($e);
