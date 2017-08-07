@@ -9,8 +9,8 @@ class RedisCache implements CacheInterface{
      * constructor
      */
     public function __construct(){
-        if(!extension_loaded('redis')){
-            die('Redis extension is not loaded');
+        if(!extension_loaded('redis')) {
+            throw new Exception('Redis extension is not loaded');
         }
         $this->cache = new Redis();
     }
@@ -19,7 +19,9 @@ class RedisCache implements CacheInterface{
      * destructor closes the connection
      */
     public function __destruct(){
-        $this->cache->close();
+        if (is_object($this->cache)) {
+            $this->cache->close();
+        }
     }
 
     /**
@@ -42,10 +44,10 @@ class RedisCache implements CacheInterface{
      * @return $this
      */
     public function addServer($host, $port, $persistent = false){
-        if($persistent === false){
+        if ($persistent === false) {
             $this->cache->connect($host, intval($port));
         }
-        else{
+        else {
             $this->cache->pconnect($host, intval($port));
         }
         return $this;

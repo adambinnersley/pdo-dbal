@@ -9,17 +9,18 @@ class MemcachedCache implements CacheInterface{
      * constructor
      */
     public function __construct(){
-        if(!extension_loaded('memcached')){
-            die('Memcache extension is not loaded');
+        if (!extension_loaded('memcached')) {
+            throw new Exception('Memcache extension is not loaded');
         }
-        
     }
     
     /**
      * destructor closes the connection
      */
     public function __destruct(){
-        $this->cache->quit();
+        if (is_object($this->cache)) {
+            $this->cache->quit();
+        }
     }
 
     /**

@@ -301,6 +301,8 @@ final class Database implements DBInterface{
      */
     public function update($table, $records, $where = array(), $limit = 0){
         unset($this->values);
+        $fields = array();
+        
         foreach($records as $field => $value){
             $fields[] = sprintf("`%s` = ?", $field);
             $this->values[] = $value;

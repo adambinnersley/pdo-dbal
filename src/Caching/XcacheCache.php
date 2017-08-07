@@ -9,8 +9,8 @@ class XcacheCache implements CacheInterface{
      * constructor
      */
     public function __construct(){
-        if(!extension_loaded('xcache')){
-            die('xCache extension is not loaded');
+        if (!extension_loaded('xcache')) {
+            throw new Exception('xCache extension is not loaded');
         }
     }
 

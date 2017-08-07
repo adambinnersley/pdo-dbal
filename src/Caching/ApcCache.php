@@ -1,14 +1,14 @@
 <?php
 namespace DBAL\Caching;
 
-class ApcCache implements CacheInterface{
+class ApcCache implements CacheInterface {
     
     /**
      * APC constructor
      */
     public function __construct(){
-        if(!extension_loaded('apc')){
-            die('APC extension is not loaded');
+        if (!extension_loaded('apc')) {
+            throw new Exception('APC extension is not loaded');
         }
     }
 
