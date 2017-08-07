@@ -165,50 +165,6 @@ final class Database implements DBInterface{
     }
     
     /**
-     * Build the SQL query but doesn't execute it
-     * @param string $table This should be the table you wish to select the values from
-     * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-     * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
-     * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
-     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
-     */
-    protected function buildSelectQuery($table, $where = array(), $fields = '*', $order = array(), $limit = 0){
-        if(is_array($fields)){
-            $selectfields = array();
-            foreach($fields as $field => $value){
-                $selectfields[] = sprintf("`%s`", $value);
-            }
-            $fieldList = implode(', ', $selectfields);
-        }
-        else{$fieldList = '*';}
-        
-        unset($this->values);
-        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fieldList, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
-        $this->key = md5($this->database.$this->sql.serialize($this->values));
-    }
-    
-    /**
-     * Execute the current query if no cache value is available
-     * @param boolean $cache If the cache should be checked for the checked for the values of the query set to true else set to false 
-     * @return mixed If a cached value exists will be returned else if cache is not checked and query is executed will not return anything
-     */
-    protected function executeQuery($cache = true){
-        if($this->logQueries){$this->writeQueryToLog();}
-        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
-            return $this->cacheValue;
-        }
-        else{
-            try{
-                $this->query = $this->db->prepare($this->sql);
-                $this->query->execute($this->values);
-            }
-            catch(\Exception $e){
-                $this->error($e);
-            }
-        }
-    }
-    
-    /**
      * Returns a single record for a select query for the chosen table
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
@@ -457,6 +413,50 @@ final class Database implements DBInterface{
      */
     public function closeDatabase(){
         $this->db = null;
+    }
+    
+    /**
+     * Build the SQL query but doesn't execute it
+     * @param string $table This should be the table you wish to select the values from
+     * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+     * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+     * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
+     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+     */
+    protected function buildSelectQuery($table, $where = array(), $fields = '*', $order = array(), $limit = 0){
+        if(is_array($fields)){
+            $selectfields = array();
+            foreach($fields as $field => $value){
+                $selectfields[] = sprintf("`%s`", $value);
+            }
+            $fieldList = implode(', ', $selectfields);
+        }
+        else{$fieldList = '*';}
+        
+        unset($this->values);
+        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fieldList, $table, $this->where($where), $this->orderBy($order), $this->limit($limit));
+        $this->key = md5($this->database.$this->sql.serialize($this->values));
+    }
+    
+    /**
+     * Execute the current query if no cache value is available
+     * @param boolean $cache If the cache should be checked for the checked for the values of the query set to true else set to false 
+     * @return mixed If a cached value exists will be returned else if cache is not checked and query is executed will not return anything
+     */
+    protected function executeQuery($cache = true){
+        if($this->logQueries){$this->writeQueryToLog();}
+        if($cache && $this->cacheEnabled && $this->getCache($this->key)){
+            return $this->cacheValue;
+        }
+        else{
+            try{
+                $this->query = $this->db->prepare($this->sql);
+                $this->query->execute($this->values);
+            }
+            catch(\Exception $e){
+                $this->error($e);
+            }
+        }
     }
     
     /**
