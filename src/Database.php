@@ -364,16 +364,14 @@ final class Database implements DBInterface{
         if($cache && $this->cacheEnabled && $this->getCache($this->key)){
             return $this->cacheValue;
         }
-        else{
-            try{
-                $this->query = $this->db->prepare($this->sql);
-                $this->query->execute($this->values);
-            }
-            catch(\Exception $e){
-                $this->error($e);
-            }
+        try{
+            $this->query = $this->db->prepare($this->sql);
+            $this->query->execute($this->values);
         }
-    }
+        catch(\Exception $e){
+            $this->error($e);
+        }
+}
 	
     /**
      * This outputs the SQL where query based on a given array
