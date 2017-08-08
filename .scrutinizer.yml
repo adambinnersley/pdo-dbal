@@ -20,7 +20,7 @@ tools:
                 - 'vendor/*'
 
     php_code_coverage:
-        enabled:              false
+        enabled:              true
         filter:
             excluded_paths:
                 - 'logs/*'
@@ -96,5 +96,11 @@ tools:
                     isser_method_name: ^(?:[_a-zA-Z]|__)[a-zA-Z0-9]*$ #Allow underscores & caps
         filter:
             excluded_paths:
-                - 'logs/*'
+                - 'docs/*'
+                - 'examples/*'
+                - 'extras/*'
+                - 'test/*'
                 - 'vendor/*'
+
+    # Security Advisory Checker
+    sensiolabs_security_checker: true
