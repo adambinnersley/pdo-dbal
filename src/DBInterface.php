@@ -5,6 +5,7 @@ interface DBInterface{
     public function query($sql);
     public function select($table);
     public function selectAll($table);
+    public function fetchColumn($table);
     public function insert($table, $records);
     public function update($table, $records);
     public function delete($table, $where);
