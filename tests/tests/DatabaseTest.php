@@ -8,11 +8,11 @@ class DatabaseTest extends TestCase{
     
     public static $db;
     
-    public function setUpBeforeClass(){
+    public static function setUpBeforeClass(){
         self::$db = new Database('localhost', 'root', '', 'test_db');
     }
     
-    public function tearDownAfterClass(){
+    public static function tearDownAfterClass(){
         self::$db = null;
     }
     
