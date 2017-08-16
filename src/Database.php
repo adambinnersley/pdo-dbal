@@ -7,14 +7,13 @@ use PDO;
  * PDO Database connection class
  *
  * @author Adam Binnersley <abinnersley@gmail.com>
- * @version PDO Database Class 1.0.1
  */
 final class Database implements DBInterface{
-    public $db;
-    public $sql;
+    protected $db;
+    protected $sql;
     private $key;
     
-    public $logLocation = 'logs'.DIRECTORY_SEPARATOR;
+    protected $logLocation = 'logs'.DIRECTORY_SEPARATOR;
     public $logErrors = true;
     public $logQueries = false;
     public $displayErrors = false;
