@@ -8,17 +8,11 @@ class DatabaseTest extends TestCase{
     
     public $db;
     
-    /**
-     * @covers DBAL\Database
-     */
-    public function setUp(){
+    public function setUpBeforeClass(){
         $this->db = new Database('localhost', 'root', '', 'test_db');
     }
     
-    /**
-     * @covers DBAL\Database
-     */
-    public function tearDown(){
+    public function tearDownAfterClass(){
         $this->db = null;
     }
     
