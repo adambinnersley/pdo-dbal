@@ -6,11 +6,10 @@ php:
   
 before_script:
   - composer self-update
-  - composer --version
 
 install:
   - composer install
 
-after_script:
+script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover clover.xml
+  - php ocular.phar code-coverage:upload --format=php-clover clover.xml  
