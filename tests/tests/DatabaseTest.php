@@ -9,7 +9,7 @@ class DatabaseTest extends TestCase{
     public static $db;
     
     public static function setUpBeforeClass(){
-        self::$db = new Database('db4free.net', 'example_user_1', 'Password123', 'test_database_1');
+        self::$db = new Database('db4free.net;port=3307', 'example_user_1', 'Password123', 'test_database_1');
     }
     
     public static function tearDownAfterClass(){
