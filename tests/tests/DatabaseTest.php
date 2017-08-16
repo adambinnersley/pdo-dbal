@@ -6,21 +6,21 @@ use PHPUnit\Framework\TestCase;
 
 class DatabaseTest extends TestCase{
     
-    public $db;
+    public static $db;
     
     public function setUpBeforeClass(){
-        $this->db = new Database('localhost', 'root', '', 'test_db');
+        self::$db = new Database('localhost', 'root', '', 'test_db');
     }
     
     public function tearDownAfterClass(){
-        $this->db = null;
+        self::$db = null;
     }
     
     /**
      * @covers DBAL\Database
      */
     public function testConnect(){
-        $this->assertObjectHasAttribute('db', $this->db);
+        $this->assertObjectHasAttribute('db', self::$db);
     }
     
     /**
@@ -35,7 +35,7 @@ class DatabaseTest extends TestCase{
      * @uses DBAL\Database::__construct
      */
     public function testQuery(){
-        $query = $this->db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
+        $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
         $this->assertArrayHasKey('0', $query);
         $this->assertCount(1, $query);
     }
