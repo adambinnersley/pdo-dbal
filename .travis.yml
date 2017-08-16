@@ -8,6 +8,9 @@ before_script:
   - composer self-update
   - composer --version
 
+install:
+  - composer install
+
 script:
   - ../vendor/bin/phpunit --configuration ../phpunit.xml
 
