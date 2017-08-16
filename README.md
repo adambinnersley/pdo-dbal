@@ -38,6 +38,6 @@ $username = 'root';
 $password = '';
 $database = 'my_db';
 
-$db = new DBAL/Database($hostname, $username, $password, $database);
+$db = new DBAL\Database($hostname, $username, $password, $database);
 
 ```
