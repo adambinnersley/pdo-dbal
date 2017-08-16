@@ -35,6 +35,7 @@ class DatabaseTest extends TestCase{
      * @uses DBAL\Database::__construct
      */
     public function testQuery(){
+        self::$db = new Database('localhost', 'root', '', 'test_db');
         $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
         $this->assertArrayHasKey('0', $query);
         $this->assertCount(1, $query);
