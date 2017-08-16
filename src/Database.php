@@ -7,6 +7,7 @@ use PDO;
  * PDO Database connection class
  *
  * @author Adam Binnersley <abinnersley@gmail.com>
+ * @version PDO Database Class
  */
 final class Database implements DBInterface{
     protected $db;
