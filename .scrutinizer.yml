@@ -20,7 +20,7 @@ tools:
                 - 'vendor/*'
 
     php_code_coverage:
-        enabled:              true
+        enabled: false
         filter:
             excluded_paths:
                 - 'logs/*'
