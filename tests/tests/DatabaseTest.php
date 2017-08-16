@@ -44,7 +44,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::select
      */
     public function testSelect(){
-        $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 1));
+        $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
         $this->assertArrayHasKey('name', $simpleSelect);
     }
     
