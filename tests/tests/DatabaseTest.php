@@ -38,6 +38,7 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers DBAL\Database::query
+     * @uses DBAL\Database::__construct
      */
     public function testQuery(){
         $query = $this->db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
