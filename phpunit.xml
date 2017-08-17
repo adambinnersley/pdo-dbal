@@ -3,7 +3,7 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.3/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          forceCoversAnnotation="true"
-         beStrictAboutCoversAnnotation="true"
+         beStrictAboutCoversAnnotation="false"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
          verbose="true">
@@ -19,9 +19,9 @@
         <log type="coverage-clover" target="clover.xml"/>
     </logging>
     <php>
-        <var name="DB_DSN" value="mysql:dbname=my_database;host=localhost" />
-        <var name="DB_USER" value="my_user" />
-        <var name="DB_PASSWD" value="my_password" />
-        <var name="DB_DBNAME" value="my_database" />
+        <var name="DB_HOST" value="localhost" />
+        <var name="DB_USER" value="root" />
+        <var name="DB_PASSWD" value="" />
+        <var name="DB_DBNAME" value="test_db" />
     </php>
 </phpunit>

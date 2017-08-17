@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1502976051">
+  <project timestamp="1502976051">
+    <package name="DBAL\Caching">
+      <file name="Z:\wamp\www\repositories\Database\src/Caching/ApcCache.php">
+        <class name="ApcCache" namespace="DBAL\Caching">
+          <metrics complexity="8" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="0" elements="16" coveredelements="0"/>
+        </class>
+        <line num="9" type="method" name="__construct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="10" type="stmt" count="0"/>
+        <line num="11" type="stmt" count="0"/>
+        <line num="13" type="stmt" count="0"/>
+        <line num="21" type="method" name="connect" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="22" type="stmt" count="0"/>
+        <line num="32" type="method" name="save" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="33" type="stmt" count="0"/>
+        <line num="43" type="method" name="replace" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="52" type="method" name="fetch" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="61" type="method" name="delete" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="62" type="stmt" count="0"/>
+        <line num="69" type="method" name="deleteAll" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="70" type="stmt" count="0"/>
+        <metrics loc="72" ncloc="35" classes="1" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="0" elements="16" coveredelements="0"/>
+      </file>
+      <file name="Z:\wamp\www\repositories\Database\src/Caching/MemcacheCache.php">
+        <class name="MemcacheCache" namespace="DBAL\Caching">
+          <metrics complexity="12" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="27" coveredelements="0"/>
+        </class>
+        <line num="13" type="method" name="__construct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="14" type="stmt" count="0"/>
+        <line num="15" type="stmt" count="0"/>
+        <line num="17" type="stmt" count="0"/>
+        <line num="18" type="stmt" count="0"/>
+        <line num="23" type="method" name="__destruct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="24" type="stmt" count="0"/>
+        <line num="25" type="stmt" count="0"/>
+        <line num="27" type="stmt" count="0"/>
+        <line num="36" type="method" name="connect" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="37" type="stmt" count="0"/>
+        <line num="38" type="stmt" count="0"/>
+        <line num="41" type="stmt" count="0"/>
+        <line num="43" type="stmt" count="0"/>
+        <line num="53" type="method" name="addServer" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="65" type="method" name="save" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="66" type="stmt" count="0"/>
+        <line num="76" type="method" name="replace" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="77" type="stmt" count="0"/>
+        <line num="85" type="method" name="fetch" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="94" type="method" name="delete" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="95" type="stmt" count="0"/>
+        <line num="102" type="method" name="deleteAll" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="103" type="stmt" count="0"/>
+        <metrics loc="105" ncloc="57" classes="1" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="27" coveredelements="0"/>
+      </file>
+      <file name="Z:\wamp\www\repositories\Database\src/Caching/MemcachedCache.php">
+        <class name="MemcachedCache" namespace="DBAL\Caching">
+          <metrics complexity="11" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="25" coveredelements="0"/>
+        </class>
+        <line num="11" type="method" name="__construct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="12" type="stmt" count="0"/>
+        <line num="13" type="stmt" count="0"/>
+        <line num="15" type="stmt" count="0"/>
+        <line num="20" type="method" name="__destruct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="21" type="stmt" count="0"/>
+        <line num="22" type="stmt" count="0"/>
+        <line num="24" type="stmt" count="0"/>
+        <line num="33" type="method" name="connect" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="34" type="stmt" count="0"/>
+        <line num="35" type="stmt" count="0"/>
+        <line num="45" type="method" name="addServer" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="59" type="method" name="save" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="60" type="stmt" count="0"/>
+        <line num="71" type="method" name="replace" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="72" type="stmt" count="0"/>
+        <line num="80" type="method" name="fetch" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="81" type="stmt" count="0"/>
+        <line num="89" type="method" name="delete" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="90" type="stmt" count="0"/>
+        <line num="97" type="method" name="deleteAll" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="98" type="stmt" count="0"/>
+        <metrics loc="100" ncloc="52" classes="1" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="0" elements="25" coveredelements="0"/>
+      </file>
+      <file name="Z:\wamp\www\repositories\Database\src/Caching/RedisCache.php">
+        <class name="RedisCache" namespace="DBAL\Caching">
+          <metrics complexity="12" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="27" coveredelements="0"/>
+        </class>
+        <line num="11" type="method" name="__construct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="12" type="stmt" count="0"/>
+        <line num="13" type="stmt" count="0"/>
+        <line num="15" type="stmt" count="0"/>
+        <line num="16" type="stmt" count="0"/>
+        <line num="21" type="method" name="__destruct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="22" type="stmt" count="0"/>
+        <line num="23" type="stmt" count="0"/>
+        <line num="25" type="stmt" count="0"/>
+        <line num="34" type="method" name="connect" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="35" type="stmt" count="0"/>
+        <line num="36" type="stmt" count="0"/>
+        <line num="46" type="method" name="addServer" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="51" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="64" type="method" name="save" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="65" type="stmt" count="0"/>
+        <line num="76" type="method" name="replace" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="77" type="stmt" count="0"/>
+        <line num="85" type="method" name="fetch" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="94" type="method" name="delete" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="95" type="stmt" count="0"/>
+        <line num="102" type="method" name="deleteAll" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="103" type="stmt" count="0"/>
+        <metrics loc="105" ncloc="57" classes="1" methods="9" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="18" coveredstatements="0" elements="27" coveredelements="0"/>
+      </file>
+      <file name="Z:\wamp\www\repositories\Database\src/Caching/XcacheCache.php">
+        <class name="XcacheCache" namespace="DBAL\Caching">
+          <metrics complexity="8" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="0" elements="17" coveredelements="0"/>
+        </class>
+        <line num="11" type="method" name="__construct" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="12" type="stmt" count="0"/>
+        <line num="13" type="stmt" count="0"/>
+        <line num="15" type="stmt" count="0"/>
+        <line num="23" type="method" name="connect" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="24" type="stmt" count="0"/>
+        <line num="25" type="stmt" count="0"/>
+        <line num="35" type="method" name="save" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="36" type="stmt" count="0"/>
+        <line num="47" type="method" name="replace" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="56" type="method" name="fetch" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="57" type="stmt" count="0"/>
+        <line num="65" type="method" name="delete" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="66" type="stmt" count="0"/>
+        <line num="73" type="method" name="deleteAll" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="74" type="stmt" count="0"/>
+        <metrics loc="76" ncloc="39" classes="1" methods="7" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="0" elements="17" coveredelements="0"/>
+      </file>
+    </package>
+    <file name="Z:\wamp\www\repositories\Database\src/Caching/CacheInterface.php">
+      <metrics loc="11" ncloc="11" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
+    <package name="DBAL">
+      <file name="Z:\wamp\www\repositories\Database\src/Database.php">
+        <class name="Database" namespace="DBAL">
+          <metrics complexity="85" methods="30" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="154" coveredstatements="33" elements="184" coveredelements="34"/>
+        </class>
+        <line num="42" type="method" name="__construct" visibility="public" complexity="4" crap="20" count="0"/>
+        <line num="44" type="stmt" count="0"/>
+        <line num="46" type="stmt" count="0"/>
+        <line num="47" type="stmt" count="0"/>
+        <line num="48" type="stmt" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="52" type="stmt" count="0"/>
+        <line num="53" type="stmt" count="0"/>
+        <line num="55" type="stmt" count="0"/>
+        <line num="60" type="method" name="__destruct" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="61" type="stmt" count="0"/>
+        <line num="62" type="stmt" count="0"/>
+        <line num="72" type="method" name="connectToServer" visibility="protected" complexity="2" crap="6" count="0"/>
+        <line num="73" type="stmt" count="0"/>
+        <line num="74" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
+        <line num="77" type="stmt" count="0"/>
+        <line num="83" type="method" name="setCaching" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="84" type="stmt" count="0"/>
+        <line num="85" type="stmt" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="88" type="stmt" count="0"/>
+        <line num="96" type="method" name="query" visibility="public" complexity="3" crap="3.47" count="1"/>
+        <line num="98" type="stmt" count="1"/>
+        <line num="99" type="stmt" count="1"/>
+        <line num="100" type="stmt" count="1"/>
+        <line num="101" type="stmt" count="1"/>
+        <line num="102" type="stmt" count="1"/>
+        <line num="105" type="stmt" count="0"/>
+        <line num="106" type="stmt" count="0"/>
+        <line num="108" type="stmt" count="0"/>
+        <line num="119" type="method" name="select" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="120" type="stmt" count="1"/>
+        <line num="133" type="method" name="selectAll" visibility="public" complexity="5" crap="30" count="0"/>
+        <line num="134" type="stmt" count="0"/>
+        <line num="135" type="stmt" count="0"/>
+        <line num="136" type="stmt" count="0"/>
+        <line num="137" type="stmt" count="0"/>
+        <line num="138" type="stmt" count="0"/>
+        <line num="139" type="stmt" count="0"/>
+        <line num="141" type="stmt" count="0"/>
+        <line num="154" type="method" name="fetchColumn" visibility="public" complexity="4" crap="20" count="0"/>
+        <line num="155" type="stmt" count="0"/>
+        <line num="156" type="stmt" count="0"/>
+        <line num="157" type="stmt" count="0"/>
+        <line num="158" type="stmt" count="0"/>
+        <line num="159" type="stmt" count="0"/>
+        <line num="161" type="stmt" count="0"/>
+        <line num="170" type="method" name="insert" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="171" type="stmt" count="0"/>
+        <line num="173" type="stmt" count="0"/>
+        <line num="174" type="stmt" count="0"/>
+        <line num="175" type="stmt" count="0"/>
+        <line num="186" type="method" name="update" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="187" type="stmt" count="0"/>
+        <line num="188" type="stmt" count="0"/>
+        <line num="189" type="stmt" count="0"/>
+        <line num="198" type="method" name="delete" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="199" type="stmt" count="0"/>
+        <line num="200" type="stmt" count="0"/>
+        <line num="201" type="stmt" count="0"/>
+        <line num="211" type="method" name="count" visibility="public" complexity="4" crap="20" count="0"/>
+        <line num="212" type="stmt" count="0"/>
+        <line num="213" type="stmt" count="0"/>
+        <line num="215" type="stmt" count="0"/>
+        <line num="216" type="stmt" count="0"/>
+        <line num="217" type="stmt" count="0"/>
+        <line num="218" type="stmt" count="0"/>
+        <line num="220" type="stmt" count="0"/>
+        <line num="228" type="method" name="truncate" visibility="public" complexity="3" crap="12" count="0"/>
+        <line num="230" type="stmt" count="0"/>
+        <line num="231" type="stmt" count="0"/>
+        <line num="233" type="stmt" count="0"/>
+        <line num="234" type="stmt" count="0"/>
+        <line num="236" type="stmt" count="0"/>
+        <line num="243" type="method" name="numRows" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="244" type="stmt" count="0"/>
+        <line num="245" type="stmt" count="0"/>
+        <line num="247" type="stmt" count="0"/>
+        <line num="254" type="method" name="rowCount" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="255" type="stmt" count="0"/>
+        <line num="263" type="method" name="lastInsertId" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="264" type="stmt" count="0"/>
+        <line num="272" type="method" name="fulltextIndex" visibility="public" complexity="7" crap="56" count="0"/>
+        <line num="273" type="stmt" count="0"/>
+        <line num="274" type="stmt" count="0"/>
+        <line num="275" type="stmt" count="0"/>
+        <line num="276" type="stmt" count="0"/>
+        <line num="280" type="stmt" count="0"/>
+        <line num="281" type="stmt" count="0"/>
+        <line num="283" type="stmt" count="0"/>
+        <line num="284" type="stmt" count="0"/>
+        <line num="287" type="stmt" count="0"/>
+        <line num="288" type="stmt" count="0"/>
+        <line num="289" type="stmt" count="0"/>
+        <line num="293" type="stmt" count="0"/>
+        <line num="299" type="method" name="serverVersion" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="300" type="stmt" count="0"/>
+        <line num="307" type="method" name="error" visibility="private" complexity="3" crap="12" count="0"/>
+        <line num="308" type="stmt" count="0"/>
+        <line num="309" type="stmt" count="0"/>
+        <line num="310" type="stmt" count="0"/>
+        <line num="311" type="stmt" count="0"/>
+        <line num="312" type="stmt" count="0"/>
+        <line num="314" type="stmt" count="0"/>
+        <line num="315" type="stmt" count="0"/>
+        <line num="317" type="stmt" count="0"/>
+        <line num="322" type="method" name="writeQueryToLog" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="323" type="stmt" count="0"/>
+        <line num="324" type="stmt" count="0"/>
+        <line num="325" type="stmt" count="0"/>
+        <line num="326" type="stmt" count="0"/>
+        <line num="327" type="stmt" count="0"/>
+        <line num="332" type="method" name="closeDatabase" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="333" type="stmt" count="0"/>
+        <line num="334" type="stmt" count="0"/>
+        <line num="344" type="method" name="buildSelectQuery" visibility="protected" complexity="3" crap="3.79" count="1"/>
+        <line num="345" type="stmt" count="1"/>
+        <line num="346" type="stmt" count="0"/>
+        <line num="347" type="stmt" count="0"/>
+        <line num="348" type="stmt" count="0"/>
+        <line num="350" type="stmt" count="0"/>
+        <line num="352" type="stmt" count="1"/>
+        <line num="354" type="stmt" count="1"/>
+        <line num="355" type="stmt" count="1"/>
+        <line num="356" type="stmt" count="1"/>
+        <line num="363" type="method" name="executeQuery" visibility="protected" complexity="6" crap="7.33" count="1"/>
+        <line num="364" type="stmt" count="1"/>
+        <line num="365" type="stmt" count="1"/>
+        <line num="366" type="stmt" count="0"/>
+        <line num="369" type="stmt" count="1"/>
+        <line num="370" type="stmt" count="1"/>
+        <line num="371" type="stmt" count="1"/>
+        <line num="373" type="stmt" count="0"/>
+        <line num="374" type="stmt" count="0"/>
+        <line num="376" type="stmt" count="1"/>
+        <line num="383" type="method" name="where" visibility="private" complexity="7" crap="7.60" count="1"/>
+        <line num="384" type="stmt" count="1"/>
+        <line num="385" type="stmt" count="1"/>
+        <line num="386" type="stmt" count="1"/>
+        <line num="387" type="stmt" count="1"/>
+        <line num="388" type="stmt" count="1"/>
+        <line num="389" type="stmt" count="0"/>
+        <line num="392" type="stmt" count="1"/>
+        <line num="393" type="stmt" count="1"/>
+        <line num="397" type="stmt" count="0"/>
+        <line num="398" type="stmt" count="1"/>
+        <line num="401" type="stmt" count="1"/>
+        <line num="402" type="stmt" count="1"/>
+        <line num="405" type="stmt" count="0"/>
+        <line num="413" type="method" name="orderBy" visibility="private" complexity="4" crap="6.00" count="1"/>
+        <line num="414" type="stmt" count="1"/>
+        <line num="415" type="stmt" count="1"/>
+        <line num="416" type="stmt" count="1"/>
+        <line num="419" type="stmt" count="0"/>
+        <line num="420" type="stmt" count="0"/>
+        <line num="422" type="stmt" count="0"/>
+        <line num="431" type="method" name="fields" visibility="private" complexity="3" crap="12" count="0"/>
+        <line num="432" type="stmt" count="0"/>
+        <line num="434" type="stmt" count="0"/>
+        <line num="435" type="stmt" count="0"/>
+        <line num="436" type="stmt" count="0"/>
+        <line num="437" type="stmt" count="0"/>
+        <line num="440" type="stmt" count="0"/>
+        <line num="442" type="stmt" count="0"/>
+        <line num="444" type="stmt" count="0"/>
+        <line num="452" type="method" name="limit" visibility="private" complexity="4" crap="6.00" count="1"/>
+        <line num="453" type="stmt" count="1"/>
+        <line num="454" type="stmt" count="0"/>
+        <line num="455" type="stmt" count="0"/>
+        <line num="458" type="stmt" count="1"/>
+        <line num="459" type="stmt" count="1"/>
+        <line num="461" type="stmt" count="0"/>
+        <line num="470" type="method" name="setCache" visibility="public" complexity="2" crap="6" count="0"/>
+        <line num="471" type="stmt" count="0"/>
+        <line num="472" type="stmt" count="0"/>
+        <line num="474" type="stmt" count="0"/>
+        <line num="481" type="method" name="getCache" visibility="public" complexity="3" crap="12" count="0"/>
+        <line num="482" type="stmt" count="0"/>
+        <line num="484" type="stmt" count="0"/>
+        <line num="485" type="stmt" count="0"/>
+        <line num="492" type="method" name="flushDB" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="493" type="stmt" count="0"/>
+        <line num="494" type="stmt" count="0"/>
+        <metrics loc="495" ncloc="318" classes="1" methods="30" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="154" coveredstatements="33" elements="184" coveredelements="34"/>
+      </file>
+    </package>
+    <metrics files="7" loc="964" ncloc="569" classes="6" methods="71" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="225" coveredstatements="33" elements="296" coveredelements="34"/>
+  </project>
+</coverage>

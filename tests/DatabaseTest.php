@@ -1,36 +1,19 @@
 <?php
-
-
 namespace DBAL\Tests;
 
 use DBAL\Database;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 class DatabaseTest extends TestCase{
     
-    use TestCaseTrait;
-    
     public static $db;
-    CONST HOSTNAME = 'localhost';
-    CONST DATABASE = 'my_database';
-    CONST USER = 'my_user';
-    CONST PASSWORD = 'my_password';
     
-    public function getConnection() {
-        $pdo = new \PDO('mysql:'.self::HOSTNAME, self::USER, self::PASSWORD);
-        return $this->createDefaultDBConnection($pdo, self::DATABASE);
-    }
-    
-    public function getDataSet(){
-        $this->getConnection()->createDataSet(['test_table']);
-    }
     /**
      * @covers DBAL\Database::__construct
      * @covers DBAL\Database::connectToServer
      */
     public static function setUpBeforeClass(){
-        self::$db = new Database(self::HOSTNAME, self::USER, self::PASSWORD, self::DATABASE);
+        self::$db = new Database($GLOBALS['DB_HOST'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'], $GLOBALS['DB_DBNAME']);
     }
     
     /**
@@ -200,7 +183,7 @@ class DatabaseTest extends TestCase{
     }
     
     /**
-     * @covers DBAL|Database::setCaching
+     * @covers DBAL\Database::setCaching
      */
     public function testCaching(){
         $this->assertFalse(false);
