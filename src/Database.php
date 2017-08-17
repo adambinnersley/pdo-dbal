@@ -35,17 +35,22 @@ final class Database implements DBInterface{
      * @param string $username This should be the username for the chosen database
      * @param string $password This should be the password for the chosen database 
      * @param string $database This should be the database that you wish to connect to
-     * @param string|null $backuphost If you have a replication server set up put the hostname or IP address incase the primary server goes down
+     * @param string|false $backuphost If you have a replication server set up put the hostname or IP address incase the primary server goes down
+     * @param object|false $cache If you want to cache the queries with Memcache(d)/Redis/APC/Xcache This should be the object else set to false
+     * @param int $port This should be the port number of the MySQL database connection
      */
-    public function __construct($hostname, $username, $password, $database, $backuphost = NULL){
+    public function __construct($hostname, $username, $password, $database, $backuphost = false, $cache = false, $port = 3306){
         try{
-            $this->connectToServer($username, $password, $database, $hostname);
+            $this->connectToServer($username, $password, $database, $hostname, $port);
         }
         catch(\Exception $e){
-            if($backuphost !== NULL){
-                $this->connectToServer($username, $password, $database, $backuphost);
+            if($backuphost !== false){
+                $this->connectToServer($username, $password, $database, $backuphost, $port);
             }
             $this->error($e);
+        }
+        if(is_object($cache)){
+            $this->setCaching($cache);
         }
     }
     
@@ -62,11 +67,12 @@ final class Database implements DBInterface{
      * @param string $password This should be the password for the chosen database 
      * @param string $database This should be the database that you wish to connect to
      * @param string $hostname The hostname for the database
+     * @param int $port The port number to connect to the MySQL server
      */
-    protected function connectToServer($username, $password, $database, $hostname){
+    protected function connectToServer($username, $password, $database, $hostname, $port = 3306){
         if(!$this->db){
             $this->database = $database;
-            $this->db = new PDO('mysql:host='.$hostname.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
+            $this->db = new PDO('mysql:host='.$hostname.';port='.$port.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
         }
     }
     
