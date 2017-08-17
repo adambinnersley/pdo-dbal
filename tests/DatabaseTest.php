@@ -28,7 +28,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::connectToServer
      */
     public function testConnect(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             $this->assertObjectHasAttribute('db', self::$db);
         }
         else{
@@ -40,7 +40,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database
      */
     public function testConnectFailure(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -52,7 +52,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::query
      */
     public function testQuery(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
             $this->assertArrayHasKey('0', $query);
             $this->assertCount(1, $query);
@@ -71,7 +71,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelect(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
             $this->assertArrayHasKey('name', $simpleSelect);
         }
@@ -89,7 +89,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelectAll(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             $selectAll = self::$db->selectAll('test_table');
             $this->assertGreaterThan(1, self::$db->numRows());
             $this->assertArrayHasKey('id', $selectAll[0]);
@@ -109,7 +109,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelectFailure(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             $this->assertFalse(self::$db->selectAll('unknown_table'));
         }
         else{
@@ -124,7 +124,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testInsert(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -139,7 +139,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function tsetInsertFailure(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -156,7 +156,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testUpdate(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -173,7 +173,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testUpdateFailure(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -189,7 +189,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testDelete(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -205,7 +205,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testDeleteFailure(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -219,7 +219,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testCount(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -231,7 +231,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::fulltextIndex
      */
     public function testFulltextIndex(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -244,7 +244,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::rowCount
      */
     public function testNumRows(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -256,7 +256,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::lastInsertId
      */
     public function testLastInsertID(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
@@ -268,7 +268,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::setCaching
      */
     public function testCaching(){
-        if(is_object(self::$db)){
+        if(self::$db->isConnected()){
             
         }
         else{
