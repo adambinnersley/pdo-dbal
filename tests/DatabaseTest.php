@@ -1,27 +1,45 @@
 <?php
+
+
 namespace DBAL\Tests;
 
 use DBAL\Database;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 class DatabaseTest extends TestCase{
     
-    public static $db;
+    use TestCaseTrait;
     
+    public static $db;
+    CONST HOSTNAME = 'localhost';
+    CONST DATABASE = 'my_database';
+    CONST USER = 'my_user';
+    CONST PASSWORD = 'my_password';
+    
+    public function getConnection() {
+        $pdo = new PDO('mysql:'.self::HOSTNAME, self::USER, self::PASSWORD);
+        return $this->createDefaultDBConnection($pdo, self::DATABASE);
+    }
+    
+    public function getDataSet(){
+        $this->getConnection()->createDataSet(['test_table']);
+    }
     /**
      * @covers DBAL\Database::__construct
      * @covers DBAL\Database::connectToServer
      */
     public static function setUpBeforeClass(){
-        self::$db = new Database('db4free.net;port=3307', 'example_user_1', 'Password123', 'test_database_1');
+        self::$db = new Database(self::HOSTNAME, self::USER, self::PASSWORD, self::DATABASE);
     }
     
     /**
      * @covers DBAL\Database::__destruct
-     */
+    
     public static function tearDownAfterClass(){
         self::$db = null;
-    }
+    } */
+
     
     /**
      * @covers DBAL\Database::__construct
