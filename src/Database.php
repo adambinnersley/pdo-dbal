@@ -294,6 +294,14 @@ final class Database implements DBInterface{
     }
     
     /**
+     * Checks to see if a connection has been made to the server
+     * @return boolean
+     */
+    public function isConnected(){
+        return is_object($this->db) ? true : false;
+    }
+    
+    /**
      * Returns the server version information
      */
     public function serverVersion(){
