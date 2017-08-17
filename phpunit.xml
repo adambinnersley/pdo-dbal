@@ -18,4 +18,10 @@
     <logging>
         <log type="coverage-clover" target="clover.xml"/>
     </logging>
+    <php>
+        <var name="DB_DSN" value="mysql:dbname=my_database;host=localhost" />
+        <var name="DB_USER" value="my_user" />
+        <var name="DB_PASSWD" value="my_password" />
+        <var name="DB_DBNAME" value="my_database" />
+    </php>
 </phpunit>
