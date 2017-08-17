@@ -26,8 +26,8 @@ final class Database implements DBInterface{
     protected $modified = false;
 
     private $query;
-    private $values = array();
-    private $prepare = array();
+    private $values = [];
+    private $prepare = [];
 
     /**
      * Connect to database using PDO connection
@@ -138,7 +138,7 @@ final class Database implements DBInterface{
             else{$result = $this->query->fetchAll(PDO::FETCH_ASSOC);}
             if($cache && $this->cacheEnabled){$this->setCache($this->key, $result);}
         }
-        return $result;
+        return $result ? $result : false;
     }
     
     /**
@@ -369,6 +369,7 @@ final class Database implements DBInterface{
             $this->query = $this->db->prepare($this->sql);
             $this->query->execute($this->values);
             unset($this->values);
+            $this->values = [];
         }
         catch(\Exception $e){
             $this->error($e);
@@ -381,7 +382,7 @@ final class Database implements DBInterface{
      * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
      */
     private function where($where){
-        if(is_array($where)){
+        if(is_array($where) && !empty(array_filter($where))){
             $wherefields = array();
             foreach($where as $what => $value){
                 if(is_array($value)){
@@ -411,7 +412,7 @@ final class Database implements DBInterface{
      * @return string|false If the SQL query has an valid order by will return a string else returns false
      */
     private function orderBy($order){
-        if(is_array($order)){
+        if(is_array($order) && !empty(array_filter($order))){
             foreach($order as $fieldorder => $fieldvalue){
                 return sprintf(" ORDER BY `%s` %s", $fieldorder, strtoupper($fieldvalue));
             }
@@ -450,7 +451,7 @@ final class Database implements DBInterface{
      * @return string|false Will return the LIMIT string for the current query if it is valid else returns false
      */
     private function limit($limit = 0){
-        if(is_array($limit)){
+        if(is_array($limit) && !empty(array_filter($limit))){
             foreach($limit as $start => $end){
                  return " LIMIT ".(int)$start.", ".(int)$end;
             }
