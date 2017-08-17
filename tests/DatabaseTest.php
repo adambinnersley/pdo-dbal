@@ -110,7 +110,7 @@ class DatabaseTest extends TestCase{
      */
     public function testSelectFailure(){
         if(is_object(self::$db)){
-            
+            $this->assertFalse(self::$db->selectAll('unknown_table'));
         }
         else{
             $this->assertFalse(false);
