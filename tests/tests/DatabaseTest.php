@@ -10,6 +10,7 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers DBAL\Database::__construct
+     * @covers DBAL\Database::connectToServer
      */
     public static function setUpBeforeClass(){
         self::$db = new Database('db4free.net;port=3307', 'example_user_1', 'Password123', 'test_database_1');
@@ -23,7 +24,8 @@ class DatabaseTest extends TestCase{
     }
     
     /**
-     * @covers DBAL\Database
+     * @covers DBAL\Database::__construct
+     * @covers DBAL\Database::connectToServer
      */
     public function testConnect(){
         $this->assertObjectHasAttribute('db', self::$db);
@@ -177,6 +179,13 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::lastInsertId
      */
     public function testLastInsertID(){
+        $this->assertFalse(false);
+    }
+    
+    /**
+     * @covers DBAL|Database::setCaching
+     */
+    public function testCaching(){
         $this->assertFalse(false);
     }
 }
