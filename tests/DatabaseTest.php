@@ -18,7 +18,7 @@ class DatabaseTest extends TestCase{
     CONST PASSWORD = 'my_password';
     
     public function getConnection() {
-        $pdo = new PDO('mysql:'.self::HOSTNAME, self::USER, self::PASSWORD);
+        $pdo = new \PDO('mysql:'.self::HOSTNAME, self::USER, self::PASSWORD);
         return $this->createDefaultDBConnection($pdo, self::DATABASE);
     }
     
@@ -35,12 +35,11 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers DBAL\Database::__destruct
-    
+     */
     public static function tearDownAfterClass(){
         self::$db = null;
-    } */
+    }
 
-    
     /**
      * @covers DBAL\Database::__construct
      * @covers DBAL\Database::connectToServer
