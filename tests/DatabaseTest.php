@@ -28,23 +28,38 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::connectToServer
      */
     public function testConnect(){
-        $this->assertObjectHasAttribute('db', self::$db);
+        if(is_object(self::$db)){
+            $this->assertObjectHasAttribute('db', self::$db);
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
      * @covers DBAL\Database
      */
     public function testConnectFailure(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
      * @covers DBAL\Database::query
      */
     public function testQuery(){
-        $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
-        $this->assertArrayHasKey('0', $query);
-        $this->assertCount(1, $query);
+        if(is_object(self::$db)){
+            $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
+            $this->assertArrayHasKey('0', $query);
+            $this->assertCount(1, $query);
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -56,8 +71,13 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelect(){
-        $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
-        $this->assertArrayHasKey('name', $simpleSelect);
+        if(is_object(self::$db)){
+            $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
+            $this->assertArrayHasKey('name', $simpleSelect);
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -69,7 +89,14 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelectAll(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            $selectAll = self::$db->selectAll('test_table');
+            $this->assertGreaterThan(1, self::$db->numRows());
+            $this->assertArrayHasKey('id', $selectAll[0]);
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -82,7 +109,12 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelectFailure(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -92,7 +124,12 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testInsert(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -102,7 +139,12 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function tsetInsertFailure(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -114,7 +156,12 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testUpdate(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -126,7 +173,12 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testUpdateFailure(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -137,7 +189,12 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testDelete(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -148,7 +205,12 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testDeleteFailure(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -157,14 +219,24 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testCount(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
      * @covers DBAL\Database::fulltextIndex
      */
     public function testFulltextIndex(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
@@ -172,20 +244,35 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::rowCount
      */
     public function testNumRows(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
      * @covers DBAL\Database::lastInsertId
      */
     public function testLastInsertID(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
     
     /**
      * @covers DBAL\Database::setCaching
      */
     public function testCaching(){
-        $this->assertFalse(false);
+        if(is_object(self::$db)){
+            
+        }
+        else{
+            $this->assertFalse(false);
+        }
     }
 }
