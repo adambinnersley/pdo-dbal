@@ -3,17 +3,30 @@ namespace DBAL\Tests;
 
 use DBAL\Database;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 class DatabaseTest extends TestCase{
     
+    use TestCaseTrait;
+    
     public static $db;
+    
+    public function getConnection(){
+        $pdo = new \PDO('sqlite::memory:');
+        return $this->createDefaultDBConnection($pdo, ':memory:');
+    }
+
+    public function getDataSet(){
+        return $this->createXMLDataSet(dirname(__FILE__).'/dataset/test_table.xml');
+    }
     
     /**
      * @covers DBAL\Database::__construct
      * @covers DBAL\Database::connectToServer
      */
-    public static function setUpBeforeClass(){
-        self::$db = new Database($GLOBALS['DB_HOST'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'], $GLOBALS['DB_DBNAME']);
+    public function setUp(){
+        //$this->getConnection()->createDataSet(['test_table']);
+        self::$db = new Database('localhost', $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'], $GLOBALS['DB_DBNAME']);
     }
     
     /**
@@ -28,38 +41,25 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::connectToServer
      */
     public function testConnect(){
-        if(self::$db->isConnected()){
-            $this->assertObjectHasAttribute('db', self::$db);
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->getConnection()->createDataSet(['test_table']);
+        $this->assertTrue(self::$db->isConnected());
     }
     
     /**
      * @covers DBAL\Database
      */
     public function testConnectFailure(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $db = new Database('http://fakehost', 'wrong_username', 'incorrect_password', 'non_existent_db');
+        $this->assertFalse($db->isConnected());
     }
     
     /**
      * @covers DBAL\Database::query
      */
     public function testQuery(){
-        if(self::$db->isConnected()){
-            $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
-            $this->assertArrayHasKey('0', $query);
-            $this->assertCount(1, $query);
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
+        $this->assertArrayHasKey('0', $query);
+        $this->assertCount(1, $query);
     }
     
     /**
@@ -71,13 +71,8 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelect(){
-        if(self::$db->isConnected()){
-            $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
-            $this->assertArrayHasKey('name', $simpleSelect);
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
+        $this->assertArrayHasKey('name', $simpleSelect);
     }
     
     /**
@@ -89,14 +84,9 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelectAll(){
-        if(self::$db->isConnected()){
-            $selectAll = self::$db->selectAll('test_table');
-            $this->assertGreaterThan(1, self::$db->numRows());
-            $this->assertArrayHasKey('id', $selectAll[0]);
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $selectAll = self::$db->selectAll('test_table');
+        $this->assertGreaterThan(1, self::$db->numRows());
+        $this->assertArrayHasKey('id', $selectAll[0]);
     }
     
     /**
@@ -109,12 +99,8 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testSelectFailure(){
-        if(self::$db->isConnected()){
-            $this->assertFalse(self::$db->selectAll('unknown_table'));
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertFalse(self::$db->selectAll('test_table', array('id' => 100)));
+        $this->assertFalse(self::$db->selectAll('unknown_table'));
     }
     
     /**
@@ -124,12 +110,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testInsert(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertTrue(self::$db->insert('test_table', array('id' => 3, 'name' => 'Third User', 'text_field' => 'Helloooooo', 'number_field' => rand(1, 1000))));
     }
     
     /**
@@ -139,12 +120,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function tsetInsertFailure(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertTrue(self::$db->insert('test_table', array('name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
     }
     
     /**
@@ -156,12 +132,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testUpdate(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertTrue(self::$db->update('test_table', array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 3)));
     }
     
     /**
@@ -173,12 +144,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testUpdateFailure(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertFalse(self::$db->update('test_table', array('number_field' => 256), array('id' => 1)));
     }
     
     /**
@@ -189,12 +155,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testDelete(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertTrue(self::$db->delete('test_table', array('id' => 3)));
     }
     
     /**
@@ -205,12 +166,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testDeleteFailure(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertFalse(self::$db->delete('test_table', array('id' => 3)));
     }
     
     /**
@@ -219,60 +175,28 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      */
     public function testCount(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->assertEquals(2, self::$db->count('test_table'));
     }
     
     /**
      * @covers DBAL\Database::fulltextIndex
      */
     public function testFulltextIndex(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
-    }
-    
-    /**
-     * @covers DBAL\Database::numRows
-     * @covers DBAL\Database::rowCount
-     */
-    public function testNumRows(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        
     }
     
     /**
      * @covers DBAL\Database::lastInsertId
      */
     public function testLastInsertID(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        $this->testInsert();
+        $this->assertEquals(3, self::$db->lastInsertID());
     }
     
     /**
      * @covers DBAL\Database::setCaching
      */
     public function testCaching(){
-        if(self::$db->isConnected()){
-            
-        }
-        else{
-            $this->assertFalse(false);
-        }
+        
     }
 }

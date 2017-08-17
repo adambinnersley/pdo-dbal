@@ -19,9 +19,9 @@
         <log type="coverage-clover" target="clover.xml"/>
     </logging>
     <php>
-        <var name="DB_HOST" value="localhost" />
-        <var name="DB_USER" value="root" />
-        <var name="DB_PASSWD" value="" />
+        <var name="DB_HOST" value="mysql:host=localhost;dbname=test_db" />
+        <var name="DB_USER" value="user" />
+        <var name="DB_PASSWD" value="password" />
         <var name="DB_DBNAME" value="test_db" />
     </php>
 </phpunit>
