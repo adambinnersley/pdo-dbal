@@ -1,6 +1,7 @@
 build:
     environment:
-        php: '7.1'
+        php: 
+            version: '7.1'
 
 before_commands:
 - "composer install --prefer-source"
