@@ -14,5 +14,6 @@ class MemcachedCacheTest extends CacheTest{
             );
         }
         $this->cache = new MemcachedCache();
+        parent::setUp();
     }
 }

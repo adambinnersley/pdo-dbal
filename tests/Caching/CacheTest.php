@@ -10,6 +10,10 @@ abstract class CacheTest extends TestCase{
         
     protected $cache;
     
+    public function setUp() {
+        $this->cache->connect($this->host, $this->port);
+    }
+    
     public function tearDown() {
         unset($this->cache);
     }

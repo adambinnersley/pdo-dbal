@@ -11,6 +11,8 @@ class ApcCacheTest extends CacheTest{
                 'The APC extension is not available.'
             );
         }
+        $this->cache = new ApcCache();
+        parent::setUp();
     }
     
 }

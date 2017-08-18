@@ -11,6 +11,8 @@ class XcacheCacheTest extends CacheTest{
                 'The XCache extension is not available.'
             );
         }
+        $this->cache = new XcacheCache();
+        parent::setUp();
     }
     
 }

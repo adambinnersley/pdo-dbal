@@ -13,6 +13,8 @@ class RedisCacheTest extends CacheTest{
                 'The Redis extension is not available.'
             );
         }
+        $this->cache = new RedisCache();
+        parent::setUp();
     }
     
 }

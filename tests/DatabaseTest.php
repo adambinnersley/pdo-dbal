@@ -100,7 +100,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testInsert(){
-        $this->assertTrue(self::$db->insert('test_table', array('id' => 3, 'name' => 'Third User', 'text_field' => 'Helloooooo', 'number_field' => rand(1, 1000))));
+        $this->assertTrue(self::$db->insert('test_table', array('name' => 'Third User', 'text_field' => 'Helloooooo', 'number_field' => rand(1, 1000))));
     }
     
     /**
@@ -109,8 +109,8 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::executeQuery
      * @covers DBAL\Database::numRows
      */
-    public function tsetInsertFailure(){
-        $this->assertTrue(self::$db->insert('test_table', array('name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
+    public function testInsertFailure(){
+        $this->assertFalse(self::$db->insert('test_table', array('id' => 3, 'name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
     }
     
     /**
@@ -145,7 +145,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::numRows
      */
     public function testDelete(){
-        $this->assertTrue(self::$db->delete('test_table', array('id' => 3)));
+        $this->assertTrue(self::$db->delete('test_table', array('id' => array('>=', 3))));
     }
     
     /**
