@@ -27,17 +27,17 @@ abstract class CacheTest extends TestCase{
     }
     
     public function testCacheRetrieve(){
-        $this->assertAttributeEquals('testvalue', $this->cache->fetch('key1'));
+        $this->assertEquals('testvalue', $this->cache->fetch('key1'));
     }
     
     public function testCacheOverride(){
         $this->cache->replace('key1', 'newvalue', 60);
-        $this->cache->AttributeEquals('newvalue', $this->cache->fetch('key1'));
+        $this->cache->assertEquals('newvalue', $this->cache->fetch('key1'));
     }
     
     public function testCacheDelete(){
         $this->cache->assertTrue($this->cache->delete('key1'));
-        $this->cache->assertFalse();
+        $this->cache->assertFalse($this->cache->delete('key1'));
     }
     
     public function testCacheClear(){
