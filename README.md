@@ -57,9 +57,7 @@ $db = new DBAL\Database($hostname, $username, $password, $database, $backup_serv
 $db->select('test_table');
 // Query Run = "SELECT * FROM `test_table` LIMIT 1;"
 
-$db->select('test_table',
-    array('id' => 3)
-);
+$db->select('test_table', array('id' => 3));
 // Query Run = "SELECT * FROM `test_table` WHERE `id` = 3 LIMIT 1;"
 
 $db->select('test_table', array('id' => array('>=', 3)));
