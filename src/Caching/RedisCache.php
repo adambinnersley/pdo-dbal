@@ -100,6 +100,6 @@ class RedisCache implements CacheInterface{
      * @return boolean Returns true on success or false on failure
      */
     public function deleteAll(){
-        return $this->cache->flushAll();
+        return (bool)$this->cache->flushAll();
     }
 }

@@ -17,9 +17,4 @@ class RedisCacheTest extends CacheTest{
         parent::setUp();
     }
     
-    public function testCacheClear(){
-        $this->cache->save('key1', 'testvalue', 60);
-        $this->assertEquals(1, $this->cache->deleteAll());
-    }
-    
 }
