@@ -32,12 +32,12 @@ abstract class CacheTest extends TestCase{
     
     public function testCacheOverride(){
         $this->cache->replace('key1', 'newvalue', 60);
-        $this->cache->assertEquals('newvalue', $this->cache->fetch('key1'));
+        $this->assertEquals('newvalue', $this->cache->fetch('key1'));
     }
     
     public function testCacheDelete(){
-        $this->cache->assertTrue($this->cache->delete('key1'));
-        $this->cache->assertFalse($this->cache->delete('key1'));
+        $this->assertTrue($this->cache->delete('key1'));
+        $this->assertFalse($this->cache->delete('key1'));
     }
     
     public function testCacheClear(){
