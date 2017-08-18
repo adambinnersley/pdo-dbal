@@ -12,6 +12,11 @@ abstract class CacheTest extends TestCase{
     
     public function setUp() {
         $this->cache->connect($this->host, $this->port);
+        if(!$this->cache->save('servicetest', 'isactive', 60)){
+            $this->markTestSkipped(
+                'No connection is available to the caching server'
+            );
+        }
     }
     
     public function tearDown() {
