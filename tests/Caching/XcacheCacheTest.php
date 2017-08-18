@@ -1,11 +1,9 @@
 <?php
 namespace DBAL\Tests\Caching;
 
-use DBAL\Database;
 use DBAL\Caching\XcacheCache;
-use PHPUnit\Framework\TestCase;
 
-class XcacheCacheTest extends TestCase{
+class XcacheCacheTest extends CacheTest{
     
     public function setUp() {
         if(!extension_loaded('xcache')) {

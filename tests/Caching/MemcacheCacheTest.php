@@ -1,11 +1,11 @@
 <?php
 namespace DBAL\Tests\Caching;
 
-use DBAL\Database;
 use DBAL\Caching\MemcacheCache;
-use PHPUnit\Framework\TestCase;
 
-class MemcacheCacheTest extends TestCase{
+class MemcacheCacheTest extends CacheTest{
+    
+    protected $port = 11211;
     
     public function setUp() {
         if(!extension_loaded('memcache')) {
@@ -13,6 +13,7 @@ class MemcacheCacheTest extends TestCase{
                 'The memcache extension is not available.'
             );
         }
+        $this->cache = new MemcacheCache();
     }
     
 }
