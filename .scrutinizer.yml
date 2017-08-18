@@ -97,10 +97,7 @@ tools:
                     isser_method_name: ^(?:[_a-zA-Z]|__)[a-zA-Z0-9]*$ #Allow underscores & caps
         filter:
             excluded_paths:
-                - 'docs/*'
-                - 'examples/*'
-                - 'extras/*'
-                - 'test/*'
+                - 'logs/*'
                 - 'vendor/*'
 
     # Security Advisory Checker

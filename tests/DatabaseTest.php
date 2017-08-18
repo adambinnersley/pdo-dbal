@@ -3,30 +3,21 @@ namespace DBAL\Tests;
 
 use DBAL\Database;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 class DatabaseTest extends TestCase{
-    
-    use TestCaseTrait;
-    
     public static $db;
-    
-    public function getConnection(){
-        $pdo = new \PDO('sqlite::memory:');
-        return $this->createDefaultDBConnection($pdo, ':memory:');
-    }
-
-    public function getDataSet(){
-        return $this->createXMLDataSet(dirname(__FILE__).'/dataset/test_table.xml');
-    }
     
     /**
      * @covers DBAL\Database::__construct
      * @covers DBAL\Database::connectToServer
      */
     public function setUp(){
-        //$this->getConnection()->createDataSet(['test_table']);
         self::$db = new Database('localhost', $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'], $GLOBALS['DB_DBNAME']);
+        if(!self::$db->isConnected()){
+             $this->markTestSkipped(
+                'No local database connection is available'
+            );
+        }
     }
     
     /**
@@ -41,7 +32,6 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::connectToServer
      */
     public function testConnect(){
-        $this->getConnection()->createDataSet(['test_table']);
         $this->assertTrue(self::$db->isConnected());
     }
     
@@ -49,7 +39,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database
      */
     public function testConnectFailure(){
-        $db = new Database('http://fakehost', 'wrong_username', 'incorrect_password', 'non_existent_db');
+        $db = new Database('localhost', 'wrong_username', 'incorrect_password', 'non_existent_db');
         $this->assertFalse($db->isConnected());
     }
     
@@ -182,7 +172,9 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::fulltextIndex
      */
     public function testFulltextIndex(){
-        
+        $this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
     }
     
     /**
@@ -196,7 +188,9 @@ class DatabaseTest extends TestCase{
     /**
      * @covers DBAL\Database::setCaching
      */
-    public function testCaching(){
-        
+    public function testSetCaching(){
+        $this->markTestIncomplete(
+          'This test has not been implemented yet.'
+        );
     }
 }
