@@ -1,3 +1,9 @@
+[![Build Status](https://api.travis-ci.org/AdamB7586/pdo-dbal.png)](https://api.travis-ci.org/AdamB7586/pdo-dbal)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/AdamB7586/pdo-dbal/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/AdamB7586/pdo-dbal/)
+[![Code Coverage](https://scrutinizer-ci.com/g/AdamB7586/pdo-dbal/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/AdamB7586/pdo-dbal/)
+[![ghit.me](https://ghit.me/badge.svg?repo=AdamB7586/pdo-dbal)](https://ghit.me/repo/AdamB7586/pdo-dbal)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.3-8892BF.svg?style=flat-circle)](https://php.net/)
+
 # PDO Database Abstraction Layer
 A simple database abstraction layer for MySQL PDO 
 
