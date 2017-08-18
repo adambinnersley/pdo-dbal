@@ -25,7 +25,7 @@ composer require adamb/database
 - Optional cache support with APC / Memcache / Memcached / Redis / XCache
 - Optional connection to secondary database incase the no connection to the primary MySQL server is available
 - Connects to a MySQL database via PDO
-- Simplify queries to SELECT/UPDATE and DELETE Query Run =s
+- Simplify queries to SELECT / INSERT / UPDATE and DELETE
 - Built in prepared statements 
 - Compatible with PHP5.3 and later
 
