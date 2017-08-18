@@ -12,7 +12,7 @@ class RedisCache implements CacheInterface{
         if(!extension_loaded('redis')) {
             throw new Exception('Redis extension is not loaded');
         }
-        $this->cache = new Redis();
+        $this->cache = new \Redis();
     }
     
     /**

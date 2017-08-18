@@ -21,7 +21,7 @@ class XcacheCache implements CacheInterface{
      * @return $this
      */
     public function connect($host, $port){
-        $this->cache = new Xcache();
+        $this->cache = new \Xcache();
     }
     
 

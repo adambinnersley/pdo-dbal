@@ -43,7 +43,7 @@ class MemcachedCache implements CacheInterface{
      * @return $this
      */
     public function addServer($host, $port, $persistent = false){
-        $this->cache = new Memcached($persistent);
+        $this->cache = new \Memcached($persistent);
         $this->cache->addServer($host, intval($port));
         return $this;
     }
