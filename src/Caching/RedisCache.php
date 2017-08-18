@@ -3,7 +3,7 @@ namespace DBAL\Caching;
 
 class RedisCache implements CacheInterface{
     
-    protected $redisCache;
+    protected $cache;
 
     /**
      * constructor
@@ -12,15 +12,15 @@ class RedisCache implements CacheInterface{
         if(!extension_loaded('redis')) {
             throw new Exception('Redis extension is not loaded');
         }
-        $this->redisCache = new Redis();
+        $this->cache = new Redis();
     }
     
     /**
      * destructor closes the connection
      */
     public function __destruct(){
-        if (is_object($this->redisCache)) {
-            $this->redisCache->close();
+        if (is_object($this->cache)) {
+            $this->cache->close();
         }
     }
 
@@ -45,10 +45,10 @@ class RedisCache implements CacheInterface{
      */
     public function addServer($host, $port, $persistent = false){
         if ($persistent === false) {
-            $this->redisCache->connect($host, intval($port));
+            $this->cache->connect($host, intval($port));
         }
         else {
-            $this->redisCache->pconnect($host, intval($port));
+            $this->cache->pconnect($host, intval($port));
         }
         return $this;
     }
@@ -62,7 +62,7 @@ class RedisCache implements CacheInterface{
      * @return boolean Returns true if successfully added or false on failure
      */
     public function save($key, $value, $time = 0){
-        return $this->redisCache->set($key, $value, intval($time));
+        return $this->cache->set($key, $value, intval($time));
     }
     
     
@@ -83,7 +83,7 @@ class RedisCache implements CacheInterface{
      * @return mixed The store value will be returned
      */
     public function fetch($key){
-        return $this->redisCache->get($key);
+        return $this->cache->get($key);
     }
     
     /**
@@ -92,7 +92,7 @@ class RedisCache implements CacheInterface{
      * @return boolean Returns true on success or false on failure
      */
     public function delete($key){
-        return $this->redisCache->delete($key);
+        return $this->cache->delete($key);
     }
     
     /**
@@ -100,6 +100,6 @@ class RedisCache implements CacheInterface{
      * @return boolean Returns true on success or false on failure
      */
     public function deleteAll(){
-        return $this->redisCache->flushAll();
+        return $this->cache->flushAll();
     }
 }

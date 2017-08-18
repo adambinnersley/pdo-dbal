@@ -5,7 +5,7 @@ use Memcache;
 
 class MemcacheCache implements CacheInterface{
     
-    protected $memcache;
+    protected $cache;
 
     /**
      * MemcacheCache constructor
@@ -14,15 +14,15 @@ class MemcacheCache implements CacheInterface{
         if (!extension_loaded('memcache')) {
             throw new Exception('Memcache extension is not loaded');
         }
-        $this->memcache = new Memcache();
+        $this->cache = new Memcache();
     }
     
     /**
      * MemcacheCache destructor closes the connection
      */
     public function __destruct(){
-        if (is_object($this->memcache)) {
-            $this->memcache->close();
+        if (is_object($this->cache)) {
+            $this->cache->close();
         }
     }
 
@@ -35,10 +35,10 @@ class MemcacheCache implements CacheInterface{
      */
     public function connect($host, $port, $persistent = false){
         if($persistent === false){
-            $this->memcache->connect($host, intval($port));
+            $this->cache->connect($host, intval($port));
         }
         else{
-            $this->memcache->pconnect($host, intval($port));
+            $this->cache->pconnect($host, intval($port));
         }
         return $this;
     }
@@ -51,7 +51,7 @@ class MemcacheCache implements CacheInterface{
      * @return $this
      */
     public function addServer($host, $port, $persistent = true){
-        $this->memcache->addServer($host, intval($port), $persistent);
+        $this->cache->addServer($host, intval($port), $persistent);
         return $this;
     }
 
@@ -63,7 +63,7 @@ class MemcacheCache implements CacheInterface{
      * @return boolean Returns true if successfully added or false on failure
      */
     public function save($key, $value, $time = 0){
-        return $this->memcache->add($key, $value, 0, intval($time));
+        return $this->cache->add($key, $value, 0, intval($time));
     }
     
     /**
@@ -74,7 +74,7 @@ class MemcacheCache implements CacheInterface{
      * @return boolean Returns true if successfully replaced or false on failure
      */
     public function replace($key, $value, $time = 0){
-        return $this->memcache->replace($key, $value, 0, intval($time));
+        return $this->cache->replace($key, $value, 0, intval($time));
     }
     
     /**
@@ -83,7 +83,7 @@ class MemcacheCache implements CacheInterface{
      * @return mixed The store value will be returned
      */
     public function fetch($key){
-        return $this->memcache->get($key);
+        return $this->cache->get($key);
     }
     
     /**
@@ -92,7 +92,7 @@ class MemcacheCache implements CacheInterface{
      * @return boolean Returns true on success or false on failure
      */
     public function delete($key){
-        return $this->memcache->delete($key);
+        return $this->cache->delete($key);
     }
     
     /**
@@ -100,6 +100,6 @@ class MemcacheCache implements CacheInterface{
      * @return boolean Returns true on success or false on failure
      */
     public function deleteAll(){
-        return $this->memcache->flush();
+        return $this->cache->flush();
     }
 }
