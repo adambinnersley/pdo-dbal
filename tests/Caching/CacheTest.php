@@ -47,6 +47,6 @@ abstract class CacheTest extends TestCase{
     
     public function testCacheClear(){
         $this->cache->save('key1', 'testvalue', 60);
-        $this->assertTrue((bool)$this->cache->deleteAll());
+        $this->assertTrue($this->cache->deleteAll());
     }
 }
