@@ -277,14 +277,14 @@ final class Database implements DBInterface{
             }
         }else{
             try{
-                $this->sql = sprintf("SHOW INDEX FROM %s;",  $table);
-                $this->query = $this->db->exec($this->sql);
+                $this->query = $this->db->prepare("SHOW INDEX FROM ?;");
+                $this->query->execute($table);
             }
             catch(\Exception $e){
                 $this->error($e);
             }
             
-            while($index = $this->query->fetch(PDO::FETCH_ASSOC)){
+            while($index = $this->query->fetchAll(PDO::FETCH_ASSOC)){
                 if($index['Index_type'] == 'FULLTEXT' && $index['Key_name'] == 'fulltext'){
                     $fieldlist[] = $index['Column_name'];
                 }
