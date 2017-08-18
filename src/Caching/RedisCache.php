@@ -92,7 +92,7 @@ class RedisCache implements CacheInterface{
      * @return boolean Returns true on success or false on failure
      */
     public function delete($key){
-        return $this->cache->delete($key);
+        return (bool)$this->cache->delete($key);
     }
     
     /**
