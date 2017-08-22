@@ -390,7 +390,7 @@ final class Database implements DBInterface{
      * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
      */
     private function where($where){
-        if(is_array($where) && !empty(array_filter($where))){
+        if(is_array($where) && !empty($where)){
             $wherefields = array();
             foreach($where as $what => $value){
                 if(is_array($value)){
