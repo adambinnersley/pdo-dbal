@@ -316,7 +316,7 @@ final class Database implements DBInterface{
      */
     public function setLogLocation($location = false){
         if($location === false){
-            $location = getcwd().'logs'.DIRECTORY_SEPARATOR;
+            $location = dirname(__FILE__).DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR;
         }
         $this->logLocation = $location;
         if (!file_exists($location)) {
