@@ -14,7 +14,7 @@ final class Database implements DBInterface{
     protected $sql;
     private $key;
     
-    protected $logLocation = 'logs'.DIRECTORY_SEPARATOR;
+    protected $logLocation;
     public $logErrors = true;
     public $logQueries = false;
     public $displayErrors = false;
@@ -40,6 +40,7 @@ final class Database implements DBInterface{
      * @param int $port This should be the port number of the MySQL database connection
      */
     public function __construct($hostname, $username, $password, $database, $backuphost = false, $cache = false, $port = 3306){
+        $this->setLogLocation();
         try{
             $this->connectToServer($username, $password, $database, $hostname, $port);
         }
@@ -306,6 +307,22 @@ final class Database implements DBInterface{
      */
     public function serverVersion(){
         return $this->db->getAttribute(PDO::ATTR_SERVER_VERSION);
+    }
+    
+    /**
+     * Sets the location of the log files
+     * @param string $location This should be where you wish the logs to be stored
+     * @return $this
+     */
+    public function setLogLocation($location = false){
+        if($location === false){
+            $location = getcwd().'logs'.DIRECTORY_SEPARATOR;
+        }
+        $this->logLocation = $location;
+        if (!file_exists($location)) {
+            mkdir($location, 0777, true);
+        }
+        return $this;
     }
     
     /**
