@@ -37,16 +37,17 @@ final class Database implements DBInterface{
      * @param string $database This should be the database that you wish to connect to
      * @param string|false $backuphost If you have a replication server set up put the hostname or IP address incase the primary server goes down
      * @param object|false $cache If you want to cache the queries with Memcache(d)/Redis/APC/Xcache This should be the object else set to false
+     * @param boolean If you want a persistent database connection set to true
      * @param int $port This should be the port number of the MySQL database connection
      */
-    public function __construct($hostname, $username, $password, $database, $backuphost = false, $cache = false, $port = 3306){
+    public function __construct($hostname, $username, $password, $database, $backuphost = false, $cache = false, $persistent = false, $port = 3306){
         $this->setLogLocation();
         try{
-            $this->connectToServer($username, $password, $database, $hostname, $port);
+            $this->connectToServer($username, $password, $database, $hostname, $persistent, $port);
         }
         catch(\Exception $e){
             if($backuphost !== false){
-                $this->connectToServer($username, $password, $database, $backuphost, $port);
+                $this->connectToServer($username, $password, $database, $backuphost, $persistent, $port);
             }
             $this->error($e);
         }
@@ -68,12 +69,13 @@ final class Database implements DBInterface{
      * @param string $password This should be the password for the chosen database 
      * @param string $database This should be the database that you wish to connect to
      * @param string $hostname The hostname for the database
+     * @param boolean If you want a persistent database connection set to true
      * @param int $port The port number to connect to the MySQL server
      */
-    protected function connectToServer($username, $password, $database, $hostname, $port = 3306){
+    protected function connectToServer($username, $password, $database, $hostname, $persistent = false, $port = 3306){
         if(!$this->db){
             $this->database = $database;
-            $this->db = new PDO('mysql:host='.$hostname.';port='.$port.';dbname='.$database, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_PERSISTENT => true, PDO::ATTR_EMULATE_PREPARES => true));
+            $this->db = new PDO('mysql:host='.$hostname.';port='.$port.';dbname='.$database, $username, $password, array_merge(array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_EMULATE_PREPARES => true), ($persistent !== false ? array(PDO::ATTR_PERSISTENT => true) : array())));
         }
     }
     
