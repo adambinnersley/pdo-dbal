@@ -115,7 +115,7 @@ final class Database implements DBInterface{
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
      * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
-     * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
+     * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
      * @return array Returns a single table record as the standard array when running SQL queries
      */
@@ -128,7 +128,7 @@ final class Database implements DBInterface{
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
      * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
-     * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
+     * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
      * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
      * @return array Returns a multidimensional array with the chosen fields from the table
