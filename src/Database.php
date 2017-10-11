@@ -415,10 +415,10 @@ final class Database implements DBInterface{
             foreach($where as $what => $value){
                 if(is_array($value)){
                     if($value[1] == 'NULL' || $value[1] == 'NOT NULL'){
-                        $wherefields[] = sprintf("`%s` %s %s", SafeString::makeSafe($what), addslashes(SafeString::makeSafe($value[0])), $value[1]);
+                        $wherefields[] = sprintf("`%s` %s %s", SafeString::makeSafe($what), addslashes($value[0]), $value[1]);
                     }
                     else{
-                        $wherefields[] = sprintf("`%s` %s ?", SafeString::makeSafe($what), addslashes(SafeString::makeSafe($value[0])));
+                        $wherefields[] = sprintf("`%s` %s ?", SafeString::makeSafe($what), addslashes($value[0]));
                         $this->values[] = $value[1];
                     }
                 }
