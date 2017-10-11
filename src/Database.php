@@ -135,7 +135,7 @@ final class Database implements DBInterface{
      * @return array Returns a multidimensional array with the chosen fields from the table
      */
     public function selectAll($table, $where = array(), $fields = '*', $order = array(), $limit = 0, $cache = true){        
-        $this->buildSelectQuery(String::makeSafe($table), $where, $fields, $order, $limit);
+        $this->buildSelectQuery(SafeString::makeSafe($table), $where, $fields, $order, $limit);
         $result = $this->executeQuery($cache);
         if(!$result){
             if($limit === 1){$result = $this->query->fetch(PDO::FETCH_ASSOC);} // Reduce the memory usage if only one record and increase performance
@@ -156,7 +156,7 @@ final class Database implements DBInterface{
      * @return mixed If a result is found will return the value of the colum given else will return false
      */
     public function fetchColumn($table, $where = array(), $fields = '*', $colNum = 0, $order = array(), $cache = true){
-        $this->buildSelectQuery(String::makeSafe($table), $where, $fields, $order, 1);
+        $this->buildSelectQuery(SafeString::makeSafe($table), $where, $fields, $order, 1);
         $result = $this->executeQuery($cache);
         if(!$result){
             $result = $this->query->fetchColumn(intval($colNum));
@@ -174,7 +174,7 @@ final class Database implements DBInterface{
     public function insert($table, $records){
         unset($this->prepare);
         
-        $this->sql = sprintf("INSERT INTO `%s` (%s) VALUES (%s);", String::makeSafe($table), $this->fields($records, true), implode(', ', $this->prepare));
+        $this->sql = sprintf("INSERT INTO `%s` (%s) VALUES (%s);", SafeString::makeSafe($table), $this->fields($records, true), implode(', ', $this->prepare));
         $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
@@ -188,7 +188,7 @@ final class Database implements DBInterface{
      * @return boolean Returns true if update is successful else returns false
      */
     public function update($table, $records, $where = array(), $limit = 0){
-        $this->sql = sprintf("UPDATE `%s` SET %s %s%s;", String::makeSafe($table), $this->fields($records), $this->where($where), $this->limit($limit));
+        $this->sql = sprintf("UPDATE `%s` SET %s %s%s;", SafeString::makeSafe($table), $this->fields($records), $this->where($where), $this->limit($limit));
         $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
@@ -200,7 +200,7 @@ final class Database implements DBInterface{
      * @param int $limit The number of results you want to return 0 is default and will delete all results that match the query, else should be formated as a standard integer
      */
     public function delete($table, $where, $limit = 0){
-        $this->sql = sprintf("DELETE FROM `%s` %s%s;", String::makeSafe($table), $this->where($where), $this->limit($limit));
+        $this->sql = sprintf("DELETE FROM `%s` %s%s;", SafeString::makeSafe($table), $this->where($where), $this->limit($limit));
         $this->executeQuery(false);
         return $this->numRows() ? true : false;
     }
@@ -213,7 +213,7 @@ final class Database implements DBInterface{
      * @return int Returns the number of results
      */
     public function count($table, $where = array(), $cache = true){
-        $this->sql = sprintf("SELECT count(*) FROM `%s`%s;", String::makeSafe($table), $this->where($where));
+        $this->sql = sprintf("SELECT count(*) FROM `%s`%s;", SafeString::makeSafe($table), $this->where($where));
         $this->key = md5($this->database.$this->sql.serialize($this->values));
         
         $result = $this->executeQuery($cache);
@@ -231,7 +231,7 @@ final class Database implements DBInterface{
      */
     public function truncate($table){
         try{
-            $this->sql = sprintf("TRUNCATE TABLE `%s`", String::makeSafe($table));
+            $this->sql = sprintf("TRUNCATE TABLE `%s`", SafeString::makeSafe($table));
             $this->query = $this->db->exec($this->sql);
         }
         catch(\Exception $e){
@@ -373,13 +373,13 @@ final class Database implements DBInterface{
         if(is_array($fields)){
             $selectfields = array();
             foreach($fields as $field => $value){
-                $selectfields[] = sprintf("`%s`", String::makeSafe($value));
+                $selectfields[] = sprintf("`%s`", SafeString::makeSafe($value));
             }
             $fieldList = implode(', ', $selectfields);
         }
         else{$fieldList = '*';}
         
-        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fieldList, String::makeSafe($table), $this->where($where), $this->orderBy($order), $this->limit($limit));
+        $this->sql = sprintf("SELECT %s FROM `%s`%s%s%s;", $fieldList, SafeString::makeSafe($table), $this->where($where), $this->orderBy($order), $this->limit($limit));
         $this->key = md5($this->database.$this->sql.serialize($this->values));
     }
     
@@ -415,15 +415,15 @@ final class Database implements DBInterface{
             foreach($where as $what => $value){
                 if(is_array($value)){
                     if($value[1] == 'NULL' || $value[1] == 'NOT NULL'){
-                        $wherefields[] = sprintf("`%s` %s %s", String::makeSafe($what), addslashes(String::makeSafe($value[0])), $value[1]);
+                        $wherefields[] = sprintf("`%s` %s %s", SafeString::makeSafe($what), addslashes(SafeString::makeSafe($value[0])), $value[1]);
                     }
                     else{
-                        $wherefields[] = sprintf("`%s` %s ?", String::makeSafe($what), addslashes(String::makeSafe($value[0])));
+                        $wherefields[] = sprintf("`%s` %s ?", SafeString::makeSafe($what), addslashes(SafeString::makeSafe($value[0])));
                         $this->values[] = $value[1];
                     }
                 }
                 else{
-                    $wherefields[] = sprintf("`%s` = ?", String::makeSafe($what));
+                    $wherefields[] = sprintf("`%s` = ?", SafeString::makeSafe($what));
                     $this->values[] = $value;
                 }
             }
@@ -442,7 +442,7 @@ final class Database implements DBInterface{
     private function orderBy($order){
         if(is_array($order) && !empty(array_filter($order))){
             foreach($order as $fieldorder => $fieldvalue){
-                return sprintf(" ORDER BY `%s` %s", String::makeSafe($fieldorder), strtoupper(String::makeSafe($fieldvalue)));
+                return sprintf(" ORDER BY `%s` %s", SafeString::makeSafe($fieldorder), strtoupper(SafeString::makeSafe($fieldvalue)));
             }
         }
         elseif($order == 'RAND()'){
@@ -462,11 +462,11 @@ final class Database implements DBInterface{
         
         foreach($records as $field => $value){
             if($insert === true){
-                $fields[] = sprintf("`%s`", String::makeSafe($field));
+                $fields[] = sprintf("`%s`", SafeString::makeSafe($field));
                 $this->prepare[] = '?';
             }
             else{
-                $fields[] = sprintf("`%s` = ?", String::makeSafe($field));
+                $fields[] = sprintf("`%s` = ?", SafeString::makeSafe($field));
             }
             $this->values[] = $value;
         }

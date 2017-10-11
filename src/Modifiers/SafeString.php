@@ -2,7 +2,7 @@
 
 namespace DBAL\Modifiers;
 
-class String{
+class SafeString{
     
     /**
      * Make any SQL field names safe
