@@ -2,7 +2,7 @@
 namespace DBAL;
 
 use PDO;
-Use DBAL\Modifiers\String;
+Use DBAL\Modifiers\SafeString;
 
 /**
  * PDO Database connection class
