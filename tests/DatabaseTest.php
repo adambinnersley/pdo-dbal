@@ -12,7 +12,7 @@ class DatabaseTest extends TestCase{
      * @covers DBAL\Database::connectToServer
      */
     public function setUp(){
-        self::$db = new Database('localhost', $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'], $GLOBALS['DB_DBNAME']);
+        self::$db = new Database('localhost', $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD'], $GLOBALS['DB_DBNAME'], false, false, false, 'sqlite');
         if(!self::$db->isConnected()){
              $this->markTestSkipped(
                 'No local database connection is available'
