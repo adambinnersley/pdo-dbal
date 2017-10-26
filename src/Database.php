@@ -89,9 +89,8 @@ final class Database implements DBInterface{
             $this->database = $database;
             $this->db = new PDO(sprintf(self::$connectors[$type], $hostname, $port, $database), $username, $password,
                 array_merge(
-                    array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES => true),
                     ($persistent !== false ? array(PDO::ATTR_PERSISTENT => true) : array()),
-                    ($type === 'mysql' ? array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true) : array())
+                    ($type === 'mysql' ? array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES => true) : array())
                 )
             );
         }
