@@ -5,7 +5,7 @@ use DBAL\Caching\MemcacheCache;
 
 class MemcacheCacheTest extends CacheTest{
     
-    protected $host = '212.42.18.121';
+    protected $host = '127.0.0.1';
     protected $port = 11211;
     
     public function setUp() {
