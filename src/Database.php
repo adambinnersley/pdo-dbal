@@ -459,8 +459,14 @@ final class Database implements DBInterface{
     private function orderBy($order){
         if(is_array($order) && !empty(array_filter($order))){
             foreach($order as $fieldorder => $fieldvalue){
-                return sprintf(" ORDER BY `%s` %s", SafeString::makeSafe($fieldorder), strtoupper(SafeString::makeSafe($fieldvalue)));
+                if(!empty($fieldorder) && !empty($fieldvalue)){
+                    $string[] = sprintf("`%s` %s", SafeString::makeSafe($fieldorder), strtoupper(SafeString::makeSafe($fieldvalue)));
+                }
+                elseif($fieldvalue === 'RAND()'){
+                    $string[] = $fieldvalue;
+                }
             }
+            return sprintf(" ORDER BY %", implode(", ", $string));
         }
         elseif($order == 'RAND()'){
             return " ORDER BY RAND()";
