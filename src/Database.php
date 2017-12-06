@@ -466,7 +466,7 @@ final class Database implements DBInterface{
                     $string[] = $fieldvalue;
                 }
             }
-            return sprintf(" ORDER BY %", implode(", ", $string));
+            return sprintf(" ORDER BY %s", implode(", ", $string));
         }
         elseif($order == 'RAND()'){
             return " ORDER BY RAND()";
