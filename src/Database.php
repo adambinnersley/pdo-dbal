@@ -440,7 +440,7 @@ final class Database implements DBInterface{
                     }
                 }
                 else{
-                    $wherefields[] = sprintf("`%s` = ?", SafeString::makeSafe($what));
+                    $wherefields[] = sprintf("`%s` ".($value == 'NULL' || $value == 'NOT NULL' ? "IS" : "=")." ?", SafeString::makeSafe($what));
                     $this->values[] = $value;
                 }
             }
