@@ -574,7 +574,7 @@ final class Database implements DBInterface{
                 elseif(is_int($value)){$type = PDO::PARAM_INT;}
                 elseif(is_bool($value)){$type = PDO::PARAM_BOOL;}
                 else{$type = PDO::PARAM_STR;}
-                $this->query->bindParam(($i + 1), $value, $type);
+                $this->query->bindParam($i, $value, $type);
             }
         }
     }
