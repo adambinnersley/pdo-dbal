@@ -570,13 +570,12 @@ final class Database implements DBInterface{
     protected function bindValues($values){
         if(is_array($values)){
             foreach($values as $i => $value){
-                if(is_null($value) || $value === 'NULL'){$type = PDO::PARAM_NULL;}
-                elseif(is_int($value)){$type = PDO::PARAM_INT;}
+                if(is_null($value) || $value == 'NULL'){$type = PDO::PARAM_NULL; $value = NULL;}
+                elseif(is_numeric($value)){$type = PDO::PARAM_INT;}
                 elseif(is_bool($value)){$type = PDO::PARAM_BOOL;}
                 else{$type = PDO::PARAM_STR;}
-                $this->query->bindParam(($i + 1), $value, $type);
+                $this->query->bindValue(intval($i + 1), $value, $type);
             }
         }
     }
-
 }
