@@ -431,7 +431,7 @@ final class Database implements DBInterface{
         if(is_array($where) && !empty($where)){
             $wherefields = array();
             foreach($where as $field => $value){
-                $where[] = $this->formatValues($field, $value);
+                $wherefields[] = $this->formatValues($field, $value);
             }
             if(!empty($wherefields)){
                 return " WHERE ".implode(' AND ', $wherefields);
