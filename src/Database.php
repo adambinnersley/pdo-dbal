@@ -571,7 +571,7 @@ final class Database implements DBInterface{
         if(is_array($values)){
             foreach($values as $i => $value){
                 if(is_null($value) || $value == 'NULL'){$type = PDO::PARAM_NULL; $value = NULL;}
-                elseif(is_numeric($value)){$type = PDO::PARAM_INT;}
+                elseif(is_numeric($value) && intval($value) == $value){$type = PDO::PARAM_INT;}
                 elseif(is_bool($value)){$type = PDO::PARAM_BOOL;}
                 else{$type = PDO::PARAM_STR;}
                 $this->query->bindValue(intval($i + 1), $value, $type);
