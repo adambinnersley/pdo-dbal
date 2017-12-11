@@ -413,7 +413,8 @@ final class Database implements DBInterface{
         }
         try{
             $this->query = $this->db->prepare($this->sql);
-            $this->query->execute($this->values);
+            $this->bindValues($$this->values);
+            $this->query->execute();
             unset($this->values);
             $this->values = [];
         }
@@ -561,4 +562,21 @@ final class Database implements DBInterface{
         $this->values[] = $value;
         return sprintf("`%s` = ?", SafeString::makeSafe($field));
     }
+    
+    /**
+     * Bind values so they can be use in the query
+     * @param array $values This should be an array of the values that are getting added to the bind
+     */
+    protected function bindValues($values){
+        if(is_array($values)){
+            foreach($values as $i => $value){
+                if(is_null($value) || $value === 'NULL'){$type = PDO::PARAM_NULL;}
+                elseif(is_int($value)){$type = PDO::PARAM_INT;}
+                elseif(is_bool($value)){$type = PDO::PARAM_BOOL;}
+                else{$type = PDO::PARAM_STR;}
+                $this->query->bindValue($i, $value, $type);
+            }
+        }
+    }
+
 }
