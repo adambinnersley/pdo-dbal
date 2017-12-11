@@ -564,8 +564,8 @@ final class Database implements DBInterface{
     }
     
     /**
-     * Bind values so they can be use in the query
-     * @param array $values This should be an array of the values that are getting added to the bind
+     * Band values to use in the query
+     * @param array $values This should be the values being used in the query
      */
     protected function bindValues($values){
         if(is_array($values)){
@@ -574,7 +574,7 @@ final class Database implements DBInterface{
                 elseif(is_int($value)){$type = PDO::PARAM_INT;}
                 elseif(is_bool($value)){$type = PDO::PARAM_BOOL;}
                 else{$type = PDO::PARAM_STR;}
-                $this->query->bindParam($i, $value, $type);
+                $this->query->bindParam(($i + 1), $value, $type);
             }
         }
     }
