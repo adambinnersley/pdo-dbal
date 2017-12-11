@@ -2,7 +2,8 @@
 namespace DBAL;
 
 use PDO;
-Use DBAL\Modifiers\SafeString;
+use DBAL\Modifiers\SafeString;
+use DBAL\Modifiers\Operators;
 
 /**
  * PDO Database connection class
@@ -429,20 +430,8 @@ final class Database implements DBInterface{
     private function where($where){
         if(is_array($where) && !empty($where)){
             $wherefields = array();
-            foreach($where as $what => $value){
-                if(is_array($value)){
-                    if($value[1] == 'NULL' || $value[1] == 'NOT NULL'){
-                        $wherefields[] = sprintf("`%s` %s %s", SafeString::makeSafe($what), addslashes($value[0]), $value[1]);
-                    }
-                    else{
-                        $wherefields[] = sprintf("`%s` %s ?", SafeString::makeSafe($what), addslashes($value[0]));
-                        $this->values[] = $value[1];
-                    }
-                }
-                else{
-                    $wherefields[] = sprintf("`%s` ".($value == 'NULL' || $value == 'NOT NULL' ? "IS" : "=")." ?", SafeString::makeSafe($what));
-                    $this->values[] = $value;
-                }
+            foreach($where as $field => $value){
+                $where[] = $this->formatValues($field, $value);
             }
             if(!empty($wherefields)){
                 return " WHERE ".implode(' AND ', $wherefields);
@@ -543,5 +532,33 @@ final class Database implements DBInterface{
      */
     public function flushDB(){
         $this->cacheObj->deleteAll();
+    }
+    
+    /**
+     * Format the where queries and set the prepared values
+     * @param string $field This should be the field name in the database
+     * @param mixed $value This should be the value which should either be a string or an array if it contains an operator
+     * @return string This should be the string to add to the SQL query
+     */
+    protected function formatValues($field, $value){
+        if(Operators::isOperatorValid($value) && !Operators::isOperatorPrepared($value)){
+            return sprintf("`%s` %s", SafeString::makeSafe($field), Operators::getOperatorFormat($value));
+        }
+        elseif(is_array($value)){
+            if(!is_array(array_values($value)[0])){
+                $this->values[] = (isset($value[1]) ? $value[1] : array_values($value)[0]);
+                $operator = (isset($value[0]) ? $value[0] : key($value));
+            }
+            else{
+                foreach(array_values($value)[0] as $op => $array_value){
+                    $this->values[] = $array_value;
+                }
+                $operator = key($value);
+            }
+            return sprintf("`%s` %s", SafeString::makeSafe($field), Operators::getOperatorFormat($operator));
+            
+        }
+        $this->values[] = $value;
+        return sprintf("`%s` = ?", SafeString::makeSafe($field));
     }
 }
