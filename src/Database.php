@@ -413,7 +413,7 @@ final class Database implements DBInterface{
         }
         try{
             $this->query = $this->db->prepare($this->sql);
-            $this->bindValues($$this->values);
+            $this->bindValues($this->values);
             $this->query->execute();
             unset($this->values);
             $this->values = [];
@@ -574,7 +574,7 @@ final class Database implements DBInterface{
                 elseif(is_int($value)){$type = PDO::PARAM_INT;}
                 elseif(is_bool($value)){$type = PDO::PARAM_BOOL;}
                 else{$type = PDO::PARAM_STR;}
-                $this->query->bindValue($i, $value, $type);
+                $this->query->bindParam(($i + 1), $value, $type);
             }
         }
     }
