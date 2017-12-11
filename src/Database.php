@@ -13,7 +13,7 @@ use DBAL\Modifiers\Operators;
  */
 final class Database implements DBInterface{
     protected $db;
-    protected $sql;
+    public $sql;
     private $key;
     
     protected $logLocation;
