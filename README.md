@@ -188,7 +188,7 @@ echo($db->lastInsertId()); // Returns the key field value number normally the th
 ### 11. isConnected
 ```php
 
-$db->isConnected(); Returns true of false depending on if the connection is active to the server
+$db->isConnected(); // Returns true of false depending on if the connection is active to the server
 
 ```
 
