@@ -73,7 +73,7 @@ $db->select('test_table', array('id' => array('>=', 3)), array('name', 'email'))
 $db->select('test_table', array('id' => array('>=', 3)), array('name', 'email'), array('id' => 'DESC'));
 // Query Run = "SELECT `name`, `email` FROM `test_table` WHERE `id` >= 3 ORDER BY `id` DESC LIMIT 1;"
 
-The same functions can be run using selectAll() rather than select()
+// The same functions can be run using selectAll() rather than select()
 
 $db->selectAll('test_table', array('id' => array('>=', 3)), array('name', 'email'), array('id' => 'DESC'), 150);
 // Query Run = "SELECT `name`, `email` FROM `test_table` WHERE `id` >= 3 ORDER BY `id` DESC LIMIT 150;"
@@ -201,7 +201,7 @@ Database caching can be added to queries with support for APC / Memcache / Memca
 $caching = new DBAL\Caching\Memcached();
 $db = new DBAL\Database($hostname, $username, $password, $database, $backup_server, $caching);
 
-OR
+// OR
 
 $caching = new DBAL\Caching\Memcached();
 $db = new DBAL\Database($hostname, $username, $password, $database);

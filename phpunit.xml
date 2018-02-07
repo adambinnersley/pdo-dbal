@@ -15,4 +15,11 @@
             <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
+    <php>
+        <env name="HOSTNAME" value="localhost"/>
+        <env name="USERNAME" value="root"/>
+        <env name="PASSWORD" value=""/>
+        <env name="DATABASE" value="test_db"/>
+        <env name="DRIVER" value="sqlite"/>
+    </php>
 </phpunit>
