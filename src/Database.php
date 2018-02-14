@@ -543,7 +543,7 @@ final class Database implements DBInterface{
      * @return string This should be the string to add to the SQL query
      */
     protected function formatValues($field, $value) {
-        if(Operators::isOperatorValid($value) && !Operators::isOperatorPrepared($value)) {
+        if(!is_array($value) && Operators::isOperatorValid($value) && !Operators::isOperatorPrepared($value)) {
             return sprintf("`%s` %s", SafeString::makeSafe($field), Operators::getOperatorFormat($value));
         }
         elseif(is_array($value)) {

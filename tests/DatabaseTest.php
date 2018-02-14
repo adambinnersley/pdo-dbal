@@ -8,10 +8,11 @@ class DatabaseTest extends TestCase{
     public static $db;
     
     /**
+     * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      */
     public function setUp(){
-        self::$db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], false, false, true, $GLOBALS['DRIVER']);
+        $this->connectToLiveDB();
         if(!self::$db->isConnected()){
             $this->markTestSkipped(
                 'No local database connection is available'
@@ -25,7 +26,11 @@ CREATE TABLE `test_table` (
     `text_field` text NOT NULL,
     `number_field` int(11) NOT NULL,
     PRIMARY KEY (`id`)
-);');
+);
+
+INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
+(1, "My Name", "Hello World", 256),
+(2, "Inigo Montoya", "You killed my father, prepare to die", 320);');
         }
     }
     
@@ -46,14 +51,18 @@ CREATE TABLE `test_table` (
     public function testConnectFailure(){
         $db = new Database('localhost', 'wrong_username', 'incorrect_password', 'non_existent_db');
         $this->assertFalse($db->isConnected());
+        $this->connectToLiveDB();
     }
     
     /**
      * @covers \DBAL\Database::query
      */
     public function testQuery(){
+        // Insert a couple of test vales
+        self::$db->insert('test_table', array('name' => 'My Name', 'text_field' => 'Hello World', 'number_field' => rand(1, 1000)));
+        self::$db->insert('test_table', array('name' => 'Inigo Montoya', 'text_field' => 'You killed my father, prepare to die', 'number_field' => rand(1, 1000)));
         $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
-        $this->assertArrayHasKey('0', $query);
+        $this->assertArrayHasKey(0, $query);
         $this->assertCount(1, $query);
     }
     
@@ -62,8 +71,8 @@ CREATE TABLE `test_table` (
      * @covers \DBAL\Database::selectAll
      */
     public function testSelect(){
-        $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
-        $this->assertArrayHasKey('name', $simpleSelect);
+       $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
+       $this->assertArrayHasKey('name', $simpleSelect);
     }
     
     /**
@@ -104,7 +113,7 @@ CREATE TABLE `test_table` (
      * @covers \DBAL\Database::numRows
      */
     public function testUpdate(){
-        $this->assertTrue(self::$db->update('test_table', array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 3)));
+        $this->assertTrue(self::$db->update('test_table', array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 1)));
     }
     
     /**
@@ -120,7 +129,7 @@ CREATE TABLE `test_table` (
      * @covers \DBAL\Database::numRows
      */
     public function testDelete(){
-        $this->assertTrue(self::$db->delete('test_table', array('id' => array('>=', 3))));
+        $this->assertTrue(self::$db->delete('test_table', array('id' => array('>=', 2))));
     }
     
     /**
@@ -159,5 +168,9 @@ CREATE TABLE `test_table` (
         $this->markTestIncomplete(
           'This test has not been implemented yet.'
         );
+    }
+    
+    protected function connectToLiveDB(){
+        self::$db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], false, false, true, $GLOBALS['DRIVER']);
     }
 }
