@@ -95,8 +95,8 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
         $selectAll = self::$db->selectAll('test_table');
         $this->assertGreaterThan(1, self::$db->numRows());
         $this->assertArrayHasKey('id', $selectAll[0]);
-        self::$db->selectAll('test_table', array(), '*', array(), 3);
-        $this->assertEquals(3, self::$db->numRows());
+        self::$db->selectAll('test_table', array(), '*', array(), 1);
+        $this->assertEquals(1, self::$db->numRows());
     }
     
     /**
