@@ -5,7 +5,7 @@ build:
             
     project_setup:
         before:
-            - mysql -e "CREATE DATABASE IF NOT EXISTS `test_db`"
+            - mysql -e "CREATE DATABASE IF NOT EXISTS test_db"
 
 before_commands:
     - "composer install --prefer-source"
