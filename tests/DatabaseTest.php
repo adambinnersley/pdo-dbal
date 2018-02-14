@@ -3,9 +3,12 @@ namespace DBAL\Tests;
 
 use PHPUnit\Framework\TestCase;
 use DBAL\Database;
+use DBAL\Caching\MemcachedCache;
 
 class DatabaseTest extends TestCase{
-    public static $db;
+    public $db;
+    
+    protected $test_table = 'test_table';
     
     /**
      * @covers \DBAL\Database::__construct
@@ -14,24 +17,22 @@ class DatabaseTest extends TestCase{
      */
     public function setUp(){
         $this->connectToLiveDB();
-        if(!self::$db->isConnected()){
+        if(!$this->db->isConnected()){
             $this->markTestSkipped(
                 'No local database connection is available'
             );
         }
         else{
-            self::$db->query('DROP TABLE IF EXISTS `test_table`;
-CREATE TABLE `test_table` (
+            $this->db->query("DROP TABLE IF EXISTS `{$this->test_table}`;");
+            $this->db->query("CREATE TABLE `{$this->test_table}` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(255) NOT NULL,
     `text_field` text NOT NULL,
     `number_field` int(11) NOT NULL,
     PRIMARY KEY (`id`)
-);
-
-INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
-(1, "My Name", "Hello World", 256),
-(2, "Inigo Montoya", "You killed my father, prepare to die", 320);');
+);");
+            $this->db->insert($this->test_table, array('name' => 'My Name', 'text_field' => 'Hello World', 'number_field' => 256));
+            $this->db->insert($this->test_table, array('name' => 'Inigo Montoya', 'text_field' => 'You killed my father, prepare to die', 'number_field' => 320));
         }
     }
     
@@ -39,8 +40,8 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::__destruct
      * @covers \DBAL\Database::closeDatabase
      */
-    public static function tearDownAfterClass(){
-        self::$db = null;
+    public function tearDown(){
+        $this->db = null;
     }
     
     /**
@@ -48,7 +49,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::isConnected
      */
     public function testConnect(){
-        $this->assertTrue(self::$db->isConnected());
+        $this->assertTrue($this->db->isConnected());
     }
     
     /**
@@ -68,9 +69,9 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      */
     public function testQuery(){
         // Insert a couple of test vales
-        self::$db->insert('test_table', array('name' => 'My Name', 'text_field' => 'Hello World', 'number_field' => rand(1, 1000)));
-        self::$db->insert('test_table', array('name' => 'Inigo Montoya', 'text_field' => 'You killed my father, prepare to die', 'number_field' => rand(1, 1000)));
-        $query = self::$db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
+        $this->db->insert($this->test_table, array('name' => 'My Name', 'text_field' => 'Hello World', 'number_field' => rand(1, 1000)));
+        $this->db->insert($this->test_table, array('name' => 'Inigo Montoya', 'text_field' => 'You killed my father, prepare to die', 'number_field' => rand(1, 1000)));
+        $query = $this->db->query("SELECT * FROM `test_table` WHERE `id` = ?", array(1));
         $this->assertArrayHasKey(0, $query);
         $this->assertCount(1, $query);
     }
@@ -83,9 +84,13 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelect(){
-       $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
+       $simpleSelect = $this->db->select($this->test_table, array('id' => array('>', 1)), '*', array('id' => 'ASC'));
        $this->assertArrayHasKey('name', $simpleSelect);
     }
     
@@ -97,13 +102,14 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::limit
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelectAll(){
-        $selectAll = self::$db->selectAll('test_table');
-        $this->assertGreaterThan(1, self::$db->numRows());
+        $selectAll = $this->db->selectAll($this->test_table);
+        $this->assertGreaterThan(1, $this->db->numRows());
         $this->assertArrayHasKey('id', $selectAll[0]);
-        self::$db->selectAll('test_table', array(), '*', array(), 1);
-        $this->assertEquals(1, self::$db->rowCount());
+        $this->db->selectAll($this->test_table, array(), '*', array(), 1);
+        $this->assertEquals(1, $this->db->rowCount());
     }
     
     /**
@@ -111,10 +117,11 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelectFailure(){
-        $this->assertFalse(self::$db->selectAll('test_table', array('id' => 100)));
-        $this->assertFalse(self::$db->selectAll('unknown_table'));
+        $this->assertFalse($this->db->selectAll($this->test_table, array('id' => 100)));
+        $this->assertFalse($this->db->selectAll('unknown_table'));
     }
     
     /**
@@ -122,9 +129,10 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testFetchColumn(){
-        
+        $this->assertEquals('Inigo Montoya', $this->db->fetchColumn($this->test_table, array('id' => 2), '*', 1));
     }
     
     /**
@@ -132,9 +140,10 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testFetchColumnFailure(){
-        
+        $this->assertEquals(false, $this->db->fetchColumn($this->test_table, array('id' => 2), '*', 6));
     }
 
 
@@ -145,7 +154,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::bindValues
      */
     public function testInsert(){
-        $this->assertTrue(self::$db->insert('test_table', array('name' => 'Third User', 'text_field' => 'Helloooooo', 'number_field' => rand(1, 1000))));
+        $this->assertTrue($this->db->insert($this->test_table, array('name' => 'Third User', 'text_field' => 'Helloooooo', 'number_field' => rand(1, 1000))));
     }
     
     /**
@@ -155,7 +164,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::bindValues
      */
     public function testInsertFailure(){
-        $this->assertFalse(self::$db->insert('test_table', array('id' => 3, 'name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
+        $this->assertFalse($this->db->insert($this->test_table, array('id' => 3, 'name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
     }
     
     /**
@@ -165,7 +174,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::bindValues
      */
     public function testUpdate(){
-        $this->assertTrue(self::$db->update('test_table', array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 1)));
+        $this->assertTrue($this->db->update($this->test_table, array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 1)));
     }
     
     /**
@@ -175,7 +184,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::bindValues
      */
     public function testUpdateFailure(){
-        $this->assertFalse(self::$db->update('test_table', array('number_field' => 256), array('id' => 1)));
+        $this->assertFalse($this->db->update($this->test_table, array('number_field' => 256), array('id' => 1)));
     }
     
     /**
@@ -184,9 +193,13 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testDelete(){
-        $this->assertTrue(self::$db->delete('test_table', array('id' => array('>=', 2))));
+        $this->assertTrue($this->db->delete($this->test_table, array('id' => array('>=', 2))));
     }
     
     /**
@@ -196,7 +209,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::bindValues
      */
     public function testDeleteFailure(){
-        $this->assertFalse(self::$db->delete('test_table', array('id' => 3)));
+        $this->assertFalse($this->db->delete($this->test_table, array('id' => 3)));
     }
     
     /**
@@ -204,13 +217,15 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::executeQuery
      */    
     public function testCount(){
-        $this->assertEquals(2, self::$db->count('test_table'));
+        $this->assertEquals(2, $this->db->count($this->test_table));
     }
     
+    /**
+     * @covers \DBAL\Database::fulltextIndex
+     */
     public function testFulltextIndex(){
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $index = $this->db->fulltextIndex($this->test_table);
+        $this->assertArraySubset('name', $index);
     }
     
     /**
@@ -218,19 +233,20 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      */
     public function testLastInsertID(){
         $this->testInsert();
-        $this->assertEquals(3, self::$db->lastInsertID());
+        $this->assertEquals(3, $this->db->lastInsertID());
     }
     
     /**
      * @covers \DBAL\Database::setCaching
      */
     public function testSetCaching(){
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $caching = new MemcachedCache();
+        if(is_object($caching)){
+            $this->db->setCaching($caching);
+        }
     }
     
     protected function connectToLiveDB(){
-        self::$db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], false, false, true, $GLOBALS['DRIVER']);
+        $this->db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], false, false, true, $GLOBALS['DRIVER']);
     }
 }
