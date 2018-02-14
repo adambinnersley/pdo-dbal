@@ -113,6 +113,7 @@ final class Database implements DBInterface{
     /**
      * This query function is used for more advanced SQL queries for which non of the other methods fit
      * @param string $sql This should be the SQL query which you wish to run
+     * @param array $variables This should be an array of values to execute as the values in a prepared statement
      * @return array Returns array of results for the query that has just been run
      */
     public function query($sql, $variables = array(), $cache = true) {
