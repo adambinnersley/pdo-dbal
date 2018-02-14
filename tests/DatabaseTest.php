@@ -8,6 +8,7 @@ class DatabaseTest extends TestCase{
     public static $db;
     
     /**
+     * @covers \DBAL\Database::__construct
      * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      */
@@ -34,11 +35,15 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
         }
     }
     
+    /**
+     * @covers \DBAL\Database::__destruct
+     */
     public static function tearDownAfterClass(){
         self::$db = null;
     }
     
     /**
+     * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      */
     public function testConnect(){
@@ -46,7 +51,10 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     }
     
     /**
+     * @covers \DBAL\Database::__construct
+     * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
+     * @covers \DBAL\Database::error
      */
     public function testConnectFailure(){
         $db = new Database('localhost', 'wrong_username', 'incorrect_password', 'non_existent_db');
@@ -69,6 +77,9 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     /**
      * @covers \DBAL\Database::select
      * @covers \DBAL\Database::selectAll
+     * @covers \DBAL\Database::orderBy
+     * @covers \DBAL\Database::formatValues
+     * 
      */
     public function testSelect(){
        $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
@@ -77,11 +88,13 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     
     /**
      * @covers \DBAL\Database::selectAll
+     * @covers \DBAL\Database::limit
      */
     public function testSelectAll(){
         $selectAll = self::$db->selectAll('test_table');
         $this->assertGreaterThan(1, self::$db->numRows());
         $this->assertArrayHasKey('id', $selectAll[0]);
+        $this->assertEquals(1, self::$db->selectAll('test_table', array(), '*', array(), 1));
     }
     
     /**
@@ -127,6 +140,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     /**
      * @covers \DBAL\Database::delete
      * @covers \DBAL\Database::numRows
+     * @covers \DBAL\Database::formatValues
      */
     public function testDelete(){
         $this->assertTrue(self::$db->delete('test_table', array('id' => array('>=', 2))));
