@@ -16,10 +16,10 @@
         </whitelist>
     </filter>
     <php>
-        <env name="HOSTNAME" value="localhost"/>
-        <env name="USERNAME" value="root"/>
-        <env name="PASSWORD" value=""/>
-        <env name="DATABASE" value="test_db"/>
-        <env name="DRIVER" value="sqlite"/>
+        <var name="HOSTNAME" value="localhost"/>
+        <var name="USERNAME" value="root"/>
+        <var name="PASSWORD" value=""/>
+        <var name="DATABASE" value="test_db"/>
+        <var name="DRIVER" value="mysql"/>
     </php>
 </phpunit>

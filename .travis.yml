@@ -3,9 +3,15 @@ language: php
 php:
   - '7.0'
   - '7.1'
-  
+
+services:
+  - mysql
+
 before_script:
   - composer self-update
+  
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS `test_db`;'
 
 install:
   - composer install
