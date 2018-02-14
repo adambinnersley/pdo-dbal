@@ -37,6 +37,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     
     /**
      * @covers \DBAL\Database::__destruct
+     * @covers \DBAL\Database::closeDatabase
      */
     public static function tearDownAfterClass(){
         self::$db = null;
@@ -77,9 +78,10 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     /**
      * @covers \DBAL\Database::select
      * @covers \DBAL\Database::selectAll
+     * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::orderBy
      * @covers \DBAL\Database::formatValues
-     * 
+     * @covers \DBAL\Database::executeQuery
      */
     public function testSelect(){
        $simpleSelect = self::$db->select('test_table', array('id' => array('>', 1)), '*', array('id' => 'ASC'));
@@ -88,19 +90,24 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     
     /**
      * @covers \DBAL\Database::selectAll
+     * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::numRows
+     * @covers \DBAL\Database::rowCount
      * @covers \DBAL\Database::limit
+     * @covers \DBAL\Database::executeQuery
      */
     public function testSelectAll(){
         $selectAll = self::$db->selectAll('test_table');
         $this->assertGreaterThan(1, self::$db->numRows());
         $this->assertArrayHasKey('id', $selectAll[0]);
         self::$db->selectAll('test_table', array(), '*', array(), 1);
-        $this->assertEquals(1, self::$db->numRows());
+        $this->assertEquals(1, self::$db->rowCount());
     }
     
     /**
      * @covers \DBAL\Database::selectAll
+     * @covers \DBAL\Database::buildSelectQuery
+     * @covers \DBAL\Database::executeQuery
      */
     public function testSelectFailure(){
         $this->assertFalse(self::$db->selectAll('test_table', array('id' => 100)));
@@ -108,8 +115,28 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     }
     
     /**
+     * @covers \DBAL\Database::fetchColumn
+     * @covers \DBAL\Database::buildSelectQuery
+     * @covers \DBAL\Database::executeQuery
+     */
+    public function testFetchColumn(){
+        
+    }
+    
+    /**
+     * @covers \DBAL\Database::fetchColumn
+     * @covers \DBAL\Database::buildSelectQuery
+     * @covers \DBAL\Database::executeQuery
+     */
+    public function testFetchColumnFailure(){
+        
+    }
+
+
+    /**
      * @covers \DBAL\Database::insert
      * @covers \DBAL\Database::numRows
+     * @covers \DBAL\Database::executeQuery
      */
     public function testInsert(){
         $this->assertTrue(self::$db->insert('test_table', array('name' => 'Third User', 'text_field' => 'Helloooooo', 'number_field' => rand(1, 1000))));
@@ -118,6 +145,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     /**
      * @covers \DBAL\Database::insert
      * @covers \DBAL\Database::numRows
+     * @covers \DBAL\Database::executeQuery
      */
     public function testInsertFailure(){
         $this->assertFalse(self::$db->insert('test_table', array('id' => 3, 'name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
@@ -126,6 +154,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     /**
      * @covers \DBAL\Database::update
      * @covers \DBAL\Database::numRows
+     * @covers \DBAL\Database::executeQuery
      */
     public function testUpdate(){
         $this->assertTrue(self::$db->update('test_table', array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 1)));
@@ -134,6 +163,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     /**
      * @covers \DBAL\Database::update
      * @covers \DBAL\Database::numRows
+     * @covers \DBAL\Database::executeQuery
      */
     public function testUpdateFailure(){
         $this->assertFalse(self::$db->update('test_table', array('number_field' => 256), array('id' => 1)));
@@ -143,6 +173,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
      * @covers \DBAL\Database::delete
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::formatValues
+     * @covers \DBAL\Database::executeQuery
      */
     public function testDelete(){
         $this->assertTrue(self::$db->delete('test_table', array('id' => array('>=', 2))));
@@ -151,6 +182,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     /**
      * @covers \DBAL\Database::delete
      * @covers \DBAL\Database::numRows
+     * @covers \DBAL\Database::executeQuery
      */
     public function testDeleteFailure(){
         $this->assertFalse(self::$db->delete('test_table', array('id' => 3)));
@@ -158,6 +190,7 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     
     /**
      * @covers \DBAL\Database::count
+     * @covers \DBAL\Database::executeQuery
      */    
     public function testCount(){
         $this->assertEquals(2, self::$db->count('test_table'));
