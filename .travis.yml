@@ -6,6 +6,8 @@ php:
 
 services:
   - mysql
+  - memcached
+  - redis-server
 
 before_script:
   - composer self-update
