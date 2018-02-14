@@ -88,13 +88,15 @@ INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES
     
     /**
      * @covers \DBAL\Database::selectAll
+     * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::limit
      */
     public function testSelectAll(){
         $selectAll = self::$db->selectAll('test_table');
         $this->assertGreaterThan(1, self::$db->numRows());
         $this->assertArrayHasKey('id', $selectAll[0]);
-        $this->assertEquals(1, count(self::$db->selectAll('test_table', array(), '*', array(), 1)));
+        self::$db->selectAll('test_table', array(), '*', array(), 3);
+        $this->assertEquals(1, self::$db->numRows());
     }
     
     /**
