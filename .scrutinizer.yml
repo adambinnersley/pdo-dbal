@@ -2,6 +2,12 @@ build:
     environment:
         php: 
             version: '7.1'
+        
+        mysql: 5.5
+            
+        redis-server: true
+        memcached: true
+    
             
     project_setup:
         before:
