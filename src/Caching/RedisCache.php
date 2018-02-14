@@ -1,6 +1,8 @@
 <?php
 namespace DBAL\Caching;
 
+use Exception;
+
 class RedisCache implements CacheInterface{
     
     protected $cache;

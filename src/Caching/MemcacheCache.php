@@ -2,6 +2,7 @@
 namespace DBAL\Caching;
 
 use Memcache;
+use Exception;
 
 class MemcacheCache implements CacheInterface{
     
@@ -14,7 +15,7 @@ class MemcacheCache implements CacheInterface{
         if (!extension_loaded('memcache')) {
             throw new Exception('Memcache extension is not loaded');
         }
-        $this->cache = new \Memcache();
+        $this->cache = new Memcache();
     }
     
     /**

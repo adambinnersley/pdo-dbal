@@ -1,6 +1,8 @@
 <?php
 namespace DBAL\Caching;
 
+use Exception;
+
 class ApcCache implements CacheInterface {
     
     /**
