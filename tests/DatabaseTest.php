@@ -143,7 +143,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testFetchColumnFailure(){
-        $this->assertEquals(false, $this->db->fetchColumn($this->test_table, array('id' => 2), '*', 6));
+        $this->assertFalse($this->db->fetchColumn($this->test_table, array('id' => 2), '*', 6));
     }
 
 
