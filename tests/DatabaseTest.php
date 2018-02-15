@@ -173,6 +173,7 @@ class DatabaseTest extends TestCase{
 
     /**
      * @covers \DBAL\Database::insert
+     * @covers \DBAL\Database::fields
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
@@ -183,6 +184,7 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers \DBAL\Database::insert
+     * @covers \DBAL\Database::fields
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
@@ -195,6 +197,7 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers \DBAL\Database::update
+     * @covers \DBAL\Database::fields
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::where
@@ -206,6 +209,7 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers \DBAL\Database::update
+     * @covers \DBAL\Database::fields
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::where
@@ -215,7 +219,6 @@ class DatabaseTest extends TestCase{
      */
     public function testUpdateFailure(){
         $this->assertFalse($this->db->update($this->test_table, array('number_field' => 256), array('id' => 1)));
-        $this->assertFalse($this->db->update($this->test_table, array('text_field' => NULL), array('id' => 1)));
     }
     
     /**
