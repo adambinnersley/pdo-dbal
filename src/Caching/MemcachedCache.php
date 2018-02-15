@@ -12,7 +12,7 @@ class MemcachedCache implements CacheInterface{
      */
     public function __construct(){
         if (!extension_loaded('memcached')) {
-            throw new Exception('Memcache extension is not loaded');
+            throw new Exception('Memcached extension is not loaded');
         }
     }
     

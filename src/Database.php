@@ -180,8 +180,9 @@ final class Database implements DBInterface{
         if(!$result) {
             $column = $this->query->fetchColumn(intval($colNum));
             if($cache && $this->cacheEnabled) {$this->setCache($this->key, $column);}
+            return ($column ? $column : false);
         }
-        return ($column ? $column : false);
+        return false;
     }
     
     /**

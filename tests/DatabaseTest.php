@@ -233,6 +233,7 @@ class DatabaseTest extends TestCase{
      */
     public function testSetCaching(){
         $caching = new MemcachedCache();
+        $caching->connect('localhost', '11211');
         if(is_object($caching)){
             $this->db->setCaching($caching);
         }
