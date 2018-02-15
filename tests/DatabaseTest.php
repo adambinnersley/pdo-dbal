@@ -59,7 +59,7 @@ class DatabaseTest extends TestCase{
     public function testCloseDatabaseConnection(){
         $this->assertTrue($this->db->isConnected());
         $this->assertObjectHasAttribute('sql', $this->db);
-        unset($this->db);
+        $this->db = null;
         $this->assertFalse($this->db->isConnected());
         $this->assertObjectNotHasAttribute('sql', $this->db);
         $this->connectToLiveDB();
