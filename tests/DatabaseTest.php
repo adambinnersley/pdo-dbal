@@ -3,7 +3,7 @@ namespace DBAL\Tests;
 
 use PHPUnit\Framework\TestCase;
 use DBAL\Database;
-use DBAL\Caching\MemcachedCache;
+use DBAL\Caching\RedisCache;
 
 class DatabaseTest extends TestCase{
     public $db;
@@ -311,9 +311,9 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::setCaching
      */
     public function testSetCaching(){
-        if (extension_loaded('memcached')) {
-            $caching = new MemcachedCache();
-            $caching->connect('localhost', '11211');
+        if (extension_loaded('redis')) {
+            $caching = new RedisCache();
+            $caching->connect('127.0.0.1', 6379);
             if(is_object($caching)){
                 $this->db->setCaching($caching);
             }
@@ -349,9 +349,9 @@ class DatabaseTest extends TestCase{
      */
     public function testSetCache(){
         $loaded = false;
-        if (extension_loaded('memcached')) {
-            $caching = new MemcachedCache();
-            $caching->connect('localhost', '11211');
+        if (extension_loaded('redis')) {
+            $caching = new RedisCache();
+            $caching->connect('127.0.0.1', 6379);
             if(is_object($caching)){
                 $this->db->setCaching($caching);
                 $loaded = true;
