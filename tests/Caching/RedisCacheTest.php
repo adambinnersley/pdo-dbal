@@ -11,6 +11,7 @@ class RedisCacheTest extends CacheTest{
      * @covers DBAL\Caching\RedisCache
      */
     public function setUp() {
+        $success = false;
         $this->cache = new RedisCache();
         $this->cache->connect('127.0.0.1', $this->port);
         if ($this->cache->save('test', 'Success')) {
