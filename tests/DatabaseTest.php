@@ -215,7 +215,7 @@ class DatabaseTest extends TestCase{
      */
     public function testUpdateFailure(){
         $this->assertFalse($this->db->update($this->test_table, array('number_field' => 256), array('id' => 1)));
-        $this->assertFalse($this->db->update($this->test_table, array('number_field' => NULL), array('id' => 1)));
+        $this->assertFalse($this->db->update($this->test_table, array('text_field' => NULL), array('id' => 1)));
     }
     
     /**
