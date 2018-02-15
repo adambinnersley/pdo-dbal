@@ -343,6 +343,23 @@ class DatabaseTest extends TestCase{
         $this->assertObjectHasAttribute('sql', $this->db->setLogLocation(false));
     }
     
+    /**
+     * @covers \DBAL\Database::setCache
+     * @covers \DBAL\Database::getCache
+     */
+    public function setCache(){
+        if (extension_loaded('memcached')) {
+            $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
+            $this->assertEquals('Hello', $this->db->getCache('mykey'));
+            $this->assertEmpty($this->db->getCache('another_key_name'));
+        }
+        else{
+            $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
+            $this->assertFalse($this->db->getCache('mykey'));
+            $this->assertFalse($this->db->getCache('another_key_name'));
+        }
+    }
+    
     protected function connectToLiveDB(){
         $this->db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], '127.0.0.1', false, true, $GLOBALS['DRIVER']);
     }
