@@ -221,19 +221,6 @@ class DatabaseTest extends TestCase{
     }
     
     /**
-     * @covers \DBAL\Database::fulltextIndex
-     */
-    public function testFulltextIndex(){
-        $index = $this->db->fulltextIndex($this->test_table);
-        if(is_array($index)){
-            $this->assertArraySubset('name', $index);
-        }
-        else{
-            $this->markTestSkipped('Fulltext indexing may not be available with this user');
-        }
-    }
-    
-    /**
      * @covers \DBAL\Database::lastInsertID
      */
     public function testLastInsertID(){

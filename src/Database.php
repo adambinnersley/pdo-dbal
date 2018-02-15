@@ -288,35 +288,6 @@ final class Database implements DBInterface{
     }
     
     /**
-     * Returns the index of the given table or tables within the database
-     * @param string|array $table Table can wither be a standard string with a single table name or an array with multiple table names
-     * @return array Returns the table index for the selected table as an array 
-     */
-    public function fulltextIndex($table) {
-        $fieldlist = array();
-        if(is_array($table)) {
-            foreach($table as $name) {
-                $fieldlist[$name] = $this->fulltextIndex($name);
-            }
-        }else{
-            try{
-                $this->query = $this->db->prepare("SHOW INDEX FROM ?;");
-                $this->query->execute($table);
-            }
-            catch(\Exception $e) {
-                $this->error($e);
-            }
-            
-            while($index = $this->query->fetchAll(PDO::FETCH_ASSOC)) {
-                if($index['Index_type'] == 'FULLTEXT' && $index['Key_name'] == 'fulltext') {
-                    $fieldlist[] = $index['Column_name'];
-                }
-            }
-        }
-        return $fieldlist;
-    }
-    
-    /**
      * Checks to see if a connection has been made to the server
      * @return boolean
      */
