@@ -314,9 +314,7 @@ class DatabaseTest extends TestCase{
         if (extension_loaded('redis')) {
             $caching = new RedisCache();
             $caching->connect('127.0.0.1', 6379);
-            if(is_object($caching)){
-                $this->db->setCaching($caching);
-            }
+            $this->db->setCaching($caching);
         }
         $this->assertObjectHasAttribute('sql', $this->db->setCaching('not_a_instance_od_cache_but_should_still_return'));
     }
@@ -352,10 +350,9 @@ class DatabaseTest extends TestCase{
         if (extension_loaded('redis')) {
             $caching = new RedisCache();
             $caching->connect('127.0.0.1', 6379);
-            if(is_object($caching)){
-                $this->db->setCaching($caching);
-                $loaded = true;
-            }
+            $this->db->setCaching($caching);
+            $this->db->setCache('cache_status', 'Success');
+            $loaded = ($this->db->getCache('cache_status') === 'Success' ? true : false);
         }
         if($loaded === true) {
             $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
