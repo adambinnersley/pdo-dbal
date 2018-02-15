@@ -1,7 +1,7 @@
 <?php
 namespace DBAL\Caching;
 
-use Exception;
+use Redis;
 
 class RedisCache implements CacheInterface{
     
@@ -11,10 +11,7 @@ class RedisCache implements CacheInterface{
      * constructor
      */
     public function __construct(){
-        if(!extension_loaded('redis')) {
-            throw new Exception('Redis extension is not loaded');
-        }
-        $this->cache = new \Redis();
+        $this->cache = new Redis();
     }
     
     /**
