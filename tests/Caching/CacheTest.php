@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 abstract class CacheTest extends TestCase{
     
     protected $host = '127.0.0.1';
-    protected $port = false;
+    protected $port = 1;
         
     protected $cache;
     
