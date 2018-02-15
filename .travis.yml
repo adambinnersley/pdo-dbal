@@ -10,6 +10,8 @@ services:
   - redis-server
 
 before_script:
+  - sudo pecl install memcache
+  - sudo service memcached start
   - composer self-update
   
 before_install:
