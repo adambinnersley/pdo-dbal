@@ -8,8 +8,6 @@ services:
   - mysql
   - memcached
   - redis-server
-  - mongodb
-  - couchdb
 
 before_script:
   - composer self-update
@@ -26,3 +24,5 @@ script:
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover clover.xml
+  
+sudo: required

@@ -15,7 +15,8 @@ class RedisCacheTest extends CacheTest{
         $this->cache->connect('127.0.0.1', $this->port);
         if ($this->cache->save('test', 'Success')) {
             if ($this->cache->fetch('test') == 'Success') {
-              $success = true;
+                $success = true;
+                parent::setUp();
             }
         }
         if($success !== true){
