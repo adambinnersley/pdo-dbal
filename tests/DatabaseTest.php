@@ -53,6 +53,19 @@ class DatabaseTest extends TestCase{
     }
     
     /**
+     * @covers \DBAL\Database::__destruct
+     * @covers \DBAL\Database::closeDatabase
+     */
+    public function testCloseDatabaseConnection(){
+        $this->assertTrue($this->db->isConnected());
+        $this->assertObjectHasAttribute('sql', $this->db);
+        unset($this->db);
+        $this->assertFalse($this->db->isConnected());
+        $this->assertObjectNotHasAttribute('sql', $this->db);
+        $this->connectToLiveDB();
+    }
+    
+    /**
      * @covers \DBAL\Database::__construct
      * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
@@ -162,6 +175,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Database::writeQueryToLog
      */
     public function testInsertFailure(){
         $this->assertFalse($this->db->insert($this->test_table, array('id' => 3, 'name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
@@ -229,13 +243,26 @@ class DatabaseTest extends TestCase{
     }
     
     /**
+     * @covers \DBAL\Database::serverVersion
+     */
+    public function testServerVersion(){
+        $this->assertGreaterThan(5, $this->db->serverVersion());
+        $this->assertContains('.', $this->db->serverVersion());
+    }
+    
+    /**
      * @covers \DBAL\Database::setCaching
      */
     public function testSetCaching(){
-        $caching = new MemcachedCache();
-        $caching->connect('localhost', '11211');
-        if(is_object($caching)){
-            $this->db->setCaching($caching);
+        if (extension_loaded('memcached')) {
+            $caching = new MemcachedCache();
+            $caching->connect('localhost', '11211');
+            if(is_object($caching)){
+                $this->db->setCaching($caching);
+            }
+        }
+        else{
+            $this->markTestSkipped('Memcached is not avaiable');
         }
     }
     
