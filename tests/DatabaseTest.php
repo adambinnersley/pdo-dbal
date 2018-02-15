@@ -117,9 +117,13 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::where
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::rowCount
+     * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::limit
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelectAll(){
@@ -143,6 +147,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::where
+     * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
      * @covers \DBAL\Modifiers\SafeString::makeSafe
@@ -157,6 +162,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::where
+     * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
@@ -169,6 +175,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::where
+     * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
@@ -206,6 +213,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::where
+     * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
      */
     public function testUpdate(){
@@ -218,6 +226,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::where
+     * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
      */
@@ -243,6 +252,8 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers \DBAL\Database::delete
+     * @covers \DBAL\Database::where
+     * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
