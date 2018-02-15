@@ -69,7 +69,6 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      * @covers \DBAL\Database::error
-     * @covers \DBAL\Database::writeQueryToLog
      */
     public function testConnectFailure(){
         $db = new Database('localhost', 'wrong_username', 'incorrect_password', 'non_existent_db');
@@ -107,7 +106,7 @@ class DatabaseTest extends TestCase{
        $simpleSelect = $this->db->select($this->test_table, array('id' => array('>', 1)), '*', array('id' => 'ASC'));
        $this->assertArrayHasKey('name', $simpleSelect);
        $this->assertFalse($this->db->select($this->test_table, array('id' => 'IS NULL'), '*', array('id' => 'ASC')));
-       $this->assertArrayHasKey('name', $this->db->select($this->test_table, array('id' => 'IS NOT NULL'), '*', array('id' => 'ASC')));
+       $this->assertArrayHasKey('name', $this->db->select($this->test_table, array('id' => 'IS NOT NULL'), array('id', 'name'), array('id' => 'ASC')));
        $between = $this->db->select($this->test_table, array('id' => array('BETWEEN' => array(2, 3))), '*', array('id' => 'ASC'));
        $this->assertEquals(2, $between['id']);
     }
@@ -129,6 +128,8 @@ class DatabaseTest extends TestCase{
         $this->assertArrayHasKey('id', $selectAll[0]);
         $this->db->selectAll($this->test_table, array(), '*', array(), 1);
         $this->assertEquals(1, $this->db->rowCount());
+        $this->db->selectAll($this->test_table, array(), '*', array(), array(0 => 50));
+        $this->assertLessThan(51, $this->db->numRows());
     }
     
     /**
@@ -138,7 +139,6 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::where
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
-     * @covers \DBAL\Database::writeQueryToLog
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelectFailure(){
@@ -189,7 +189,6 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
-     * @covers \DBAL\Database::writeQueryToLog
      */
     public function testInsertFailure(){
         $this->assertFalse($this->db->insert($this->test_table, array('id' => 3, 'name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
@@ -215,7 +214,6 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::where
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
-     * @covers \DBAL\Database::writeQueryToLog
      */
     public function testUpdateFailure(){
         $this->assertFalse($this->db->update($this->test_table, array('number_field' => 256), array('id' => 1)));
