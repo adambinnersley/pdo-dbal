@@ -348,7 +348,16 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::getCache
      */
     public function testSetCache(){
+        $loaded = false;
         if (extension_loaded('memcached')) {
+            $caching = new MemcachedCache();
+            $caching->connect('localhost', '11211');
+            if(is_object($caching)){
+                $this->db->setCaching($caching);
+                $loaded = true;
+            }
+        }
+        if($loaded === true) {
             $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
             $this->assertEquals('Hello', $this->db->getCache('mykey'));
             $this->assertEmpty($this->db->getCache('another_key_name'));
