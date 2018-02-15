@@ -178,10 +178,10 @@ final class Database implements DBInterface{
         $this->buildSelectQuery(SafeString::makeSafe($table), $where, $fields, $order, 1);
         $result = $this->executeQuery($cache);
         if(!$result) {
-            $result = $this->query->fetchColumn(intval($colNum));
-            if($cache && $this->cacheEnabled) {$this->setCache($this->key, $result);}
+            $column = $this->query->fetchColumn(intval($colNum));
+            if($cache && $this->cacheEnabled) {$this->setCache($this->key, $column);}
         }
-        return $result;
+        return ($column ? $column : false);
     }
     
     /**
