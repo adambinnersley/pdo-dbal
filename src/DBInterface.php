@@ -11,7 +11,6 @@ interface DBInterface{
     public function delete($table, $where);
     public function count($table);
     public function truncate($table);
-    public function fulltextIndex($table);
     public function numRows();
     public function rowCount();
     public function lastInsertId();
