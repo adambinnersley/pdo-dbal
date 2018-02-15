@@ -21,7 +21,7 @@ composer require adamb/database
 ```
 
 ## Class Features
-- Optional cache support with APC / Memcache / Memcached / Redis / XCache
+- Optional cache support with Memcache / Memcached / Redis / XCache
 - Optional connection to secondary database incase the no connection to the primary MySQL server is available
 - Connects to a MySQL database via PDO
 - Simplify queries to SELECT / INSERT / UPDATE and DELETE
@@ -195,7 +195,7 @@ $db->isConnected(); // Returns true of false depending on if the connection is a
 
 ### 12. Caching
 
-Database caching can be added to queries with support for APC / Memcache / Memcached / Redis and XCache
+Database caching can be added to queries with support for Memcache / Memcached / Redis and XCache
 
 ```php
 
