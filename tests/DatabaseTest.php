@@ -60,7 +60,7 @@ class DatabaseTest extends TestCase{
         $this->assertTrue($this->db->isConnected());
         $this->assertObjectHasAttribute('sql', $this->db);
         $this->db = null;
-        $this->assertFalse($this->db->isConnected());
+        $this->assertNull($this->db);
         $this->assertObjectNotHasAttribute('sql', $this->db);
         $this->connectToLiveDB();
     }
