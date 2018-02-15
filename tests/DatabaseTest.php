@@ -69,6 +69,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      * @covers \DBAL\Database::error
+     * @covers \DBAL\Database::writeQueryToLog
      */
     public function testConnectFailure(){
         $db = new Database('localhost', 'wrong_username', 'incorrect_password', 'non_existent_db');
@@ -104,6 +105,10 @@ class DatabaseTest extends TestCase{
     public function testSelect(){
        $simpleSelect = $this->db->select($this->test_table, array('id' => array('>', 1)), '*', array('id' => 'ASC'));
        $this->assertArrayHasKey('name', $simpleSelect);
+       $this->assertFalse($this->db->select($this->test_table, array('id' => 'IS NULL'), '*', array('id' => 'ASC')));
+       $this->assertArrayHasKey('name', $this->db->select($this->test_table, array('id' => 'IS NOT NULL'), '*', array('id' => 'ASC')));
+       $between = $this->db->select($this->test_table, array('id' => array('BETWEEN' => array(2, 3))), '*', array('id' => 'ASC'));
+       $this->assertEquals(2, $between['id']);
     }
     
     /**
@@ -129,6 +134,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::buildSelectQuery
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Database::error
+     * @covers \DBAL\Database::writeQueryToLog
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelectFailure(){
@@ -174,6 +181,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Database::error
      * @covers \DBAL\Database::writeQueryToLog
      */
     public function testInsertFailure(){
@@ -195,9 +203,12 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Database::error
+     * @covers \DBAL\Database::writeQueryToLog
      */
     public function testUpdateFailure(){
         $this->assertFalse($this->db->update($this->test_table, array('number_field' => 256), array('id' => 1)));
+        $this->assertFalse($this->db->update($this->test_table, array('number_field' => NULL), array('id' => 1)));
     }
     
     /**
