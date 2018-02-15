@@ -280,9 +280,20 @@ class DatabaseTest extends TestCase{
                 $this->db->setCaching($caching);
             }
         }
-        else{
-            $this->markTestSkipped('Memcached is not avaiable');
-        }
+        $this->assertObjectHasAttribute('sql', $this->db->setCaching('not_a_instance_od_cache_but_should_still_return'));
+    }
+    
+    /**
+     * @covers \DBAL\Database::truncate
+     * @covers \DBAL\Database::error
+     * @covers \DBAL\Database::executeQuery
+     * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Database::numRows
+     */
+    public function testTruncate(){
+        $this->db->truncate($this->test_table);
+        $this->assertEquals(0, $this->db->count($this->test_table));
+        $this->assertFalse($this->db->truncate('any_table'));
     }
     
     protected function connectToLiveDB(){

@@ -252,12 +252,12 @@ final class Database implements DBInterface{
     public function truncate($table) {
         try{
             $this->sql = sprintf("TRUNCATE TABLE `%s`", SafeString::makeSafe($table));
-            $this->query = $this->db->exec($this->sql);
+            $this->executeQuery(false);
         }
         catch(\Exception $e) {
             $this->error($e);
         }
-        return $this->query ? true : false;
+        return $this->numRows() ? true : false;
     }
     
     /**
