@@ -11,13 +11,15 @@ class RedisCacheTest extends CacheTest{
      * @covers DBAL\Caching\RedisCache
      */
     public function setUp() {
-        if(!extension_loaded('redis')) {
+        try{
+        $this->cache = new RedisCache();
+        $this->cache->connect('127.0.0.1', $this->port);
+        }
+        catch(\RedisException $e){
             $this->markTestSkipped(
                 'The Redis extension is not available.'
             );
         }
-        $this->cache = new RedisCache();
-        parent::setUp();
     }
     
 }
