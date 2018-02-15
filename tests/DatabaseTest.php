@@ -150,6 +150,9 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelectFailure(){
@@ -164,6 +167,9 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::where
      * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testFetchColumn(){
@@ -177,6 +183,9 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::where
      * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testFetchColumnFailure(){
@@ -215,6 +224,10 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::where
      * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testUpdate(){
         $this->assertTrue($this->db->update($this->test_table, array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 1)));
@@ -229,6 +242,10 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::formatValues
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testUpdateFailure(){
         $this->assertFalse($this->db->update($this->test_table, array('number_field' => 256), array('id' => 1)));
@@ -257,6 +274,10 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::numRows
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
+     * @covers \DBAL\Modifiers\Operators::getOperatorFormat
+     * @covers \DBAL\Modifiers\Operators::isOperatorValid
+     * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
+     * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testDeleteFailure(){
         $this->assertFalse($this->db->delete($this->test_table, array('id' => 3)));
