@@ -8,7 +8,11 @@ class RedisCacheTest extends CacheTest{
     protected $port = 6379;
     
     /**
-     * @covers DBAL\Caching\RedisCache
+     * @covers \DBAL\Caching\RedisCache::__construct
+     * @covers \DBAL\Caching\RedisCache::connect
+     * @covers \DBAL\Caching\RedisCache::addServer
+     * @covers \DBAL\Caching\RedisCache::save
+     * @covers \DBAL\Caching\RedisCache::fetch
      */
     public function setUp() {
         $success = false;

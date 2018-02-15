@@ -128,8 +128,14 @@ class DatabaseTest extends TestCase{
         $this->assertArrayHasKey('id', $selectAll[0]);
         $this->db->selectAll($this->test_table, array(), '*', array(), 1);
         $this->assertEquals(1, $this->db->rowCount());
-        $this->db->selectAll($this->test_table, array(), '*', array(), array(0 => 50));
+        for($i = 1; $i <= 200; $i++){
+            // Insert some more values for testing
+            $this->db->insert($this->test_table, array('name' => 'Name '.$i, 'text_field' => 'TextField'.$i, 'number_field' => rand(1, 1000)));
+        }
+        $original = $this->db->selectAll($this->test_table, array(), '*', array(), array(0 => 50));
         $this->assertLessThan(51, $this->db->numRows());
+        $random = $this->db->selectAll($this->test_table, array(), '*', 'RAND()', array(0 => 50));
+        $this->assertNotEquals($original, $random);
     }
     
     /**
@@ -296,7 +302,16 @@ class DatabaseTest extends TestCase{
         $this->assertFalse($this->db->truncate('any_table'));
     }
     
+    /**
+     * @covers \DBAL\Database::setLogLocation
+     */
+    public function testChangeLogLocation(){
+        $this->assertObjectHasAttribute('sql', $this->db->setLogLocation('test/logs/'));
+        $this->assertObjectHasAttribute('sql', $this->db->setLogLocation(1));
+        $this->assertObjectHasAttribute('sql', $this->db->setLogLocation(false));
+    }
+    
     protected function connectToLiveDB(){
-        $this->db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], false, false, true, $GLOBALS['DRIVER']);
+        $this->db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], '127.0.0.1', false, true, $GLOBALS['DRIVER']);
     }
 }
