@@ -350,8 +350,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Caching\RedisCache
      * @covers \DBAL\Caching\RedisCache::__construct
      * @covers \DBAL\Caching\RedisCache::connect
-     * @covers \DBAL\Caching\RedisCache::setCache
-     * @covers \DBAL\Caching\RedisCache::getCache
+     * @covers \DBAL\Caching\RedisCache::save
+     * @covers \DBAL\Caching\RedisCache::fetch
      */
     public function testSetCache(){
         $loaded = false;
