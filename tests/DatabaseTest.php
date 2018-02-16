@@ -309,6 +309,9 @@ class DatabaseTest extends TestCase{
     
     /**
      * @covers \DBAL\Database::setCaching
+     * @covers \DBAL\Caching\RedisCache
+     * @covers \DBAL\Caching\RedisCache::__construct
+     * @covers \DBAL\Caching\RedisCache::connect
      */
     public function testSetCaching(){
         if (extension_loaded('redis')) {
@@ -344,6 +347,11 @@ class DatabaseTest extends TestCase{
     /**
      * @covers \DBAL\Database::setCache
      * @covers \DBAL\Database::getCache
+     * @covers \DBAL\Caching\RedisCache
+     * @covers \DBAL\Caching\RedisCache::__construct
+     * @covers \DBAL\Caching\RedisCache::connect
+     * @covers \DBAL\Caching\RedisCache::setCache
+     * @covers \DBAL\Caching\RedisCache::getCache
      */
     public function testSetCache(){
         $loaded = false;
