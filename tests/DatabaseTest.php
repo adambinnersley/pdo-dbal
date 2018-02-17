@@ -4,6 +4,7 @@ namespace DBAL\Tests;
 use PHPUnit\Framework\TestCase;
 use DBAL\Database;
 use DBAL\Caching\RedisCache;
+use DBAL\Caching\MemcachedCache;
 
 class DatabaseTest extends TestCase{
     public $db;
@@ -353,11 +354,42 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Caching\RedisCache::save
      * @covers \DBAL\Caching\RedisCache::fetch
      */
-    public function testSetCache(){
+    public function testRedisSetCache(){
         $loaded = false;
         if (extension_loaded('redis')) {
             $caching = new RedisCache();
             $caching->connect('127.0.0.1', 6379);
+            $this->db->setCaching($caching);
+            $this->db->setCache('cache_status', 'Success');
+            $loaded = ($this->db->getCache('cache_status') === 'Success' ? true : false);
+        }
+        if($loaded === true) {
+            $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
+            $this->assertEquals('Hello', $this->db->getCache('mykey'));
+            $this->assertEmpty($this->db->getCache('another_key_name'));
+        }
+        else{
+            $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
+            $this->assertFalse($this->db->getCache('mykey'));
+            $this->assertFalse($this->db->getCache('another_key_name'));
+        }
+    }
+    
+    
+    /**
+     * @covers \DBAL\Database::setCache
+     * @covers \DBAL\Database::getCache
+     * @covers \DBAL\Caching\MemcachedCache
+     * @covers \DBAL\Caching\MemcachedCache::__construct
+     * @covers \DBAL\Caching\MemcachedCache::connect
+     * @covers \DBAL\Caching\MemcachedCache::save
+     * @covers \DBAL\Caching\MemcachedCache::fetch
+     */
+    public function testMemcachedSetCache(){
+        $loaded = false;
+        if (extension_loaded('memcached')) {
+            $caching = new MemcachedCache();
+            $caching->connect('127.0.0.1', 11211);
             $this->db->setCaching($caching);
             $this->db->setCache('cache_status', 'Success');
             $loaded = ($this->db->getCache('cache_status') === 'Success' ? true : false);
