@@ -3,6 +3,9 @@ namespace DBAL\Caching;
 
 use Redis;
 
+/**
+ * @codeCoverageIgnore
+ */
 class RedisCache implements CacheInterface{
     
     protected $cache;

@@ -3,6 +3,9 @@ namespace DBAL\Caching;
 
 use Exception;
 
+/**
+ * @codeCoverageIgnore
+ */
 class MemcachedCache implements CacheInterface{
     
     protected $cache;
