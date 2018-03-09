@@ -392,9 +392,11 @@ final class Database implements DBInterface{
             $this->values = [];
         }
         catch(\Exception $e) {
+            unset($this->values);
+            $this->values = [];
             $this->error($e);
         }
-}
+    }
 	
     /**
      * This outputs the SQL where query based on a given array
