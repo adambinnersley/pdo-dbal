@@ -11,7 +11,7 @@ use DBAL\Modifiers\Operators;
  * @author Adam Binnersley <abinnersley@gmail.com>
  * @version PDO Database Class
  */
-final class Database implements DBInterface{
+class Database implements DBInterface{
     protected $db;
     public $sql;
     private $key;
