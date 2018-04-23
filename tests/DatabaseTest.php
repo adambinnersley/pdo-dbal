@@ -128,6 +128,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
     public function testSelectAll(){
+        $this->assertEquals(1, $this->db->numRows());
         $selectAll = $this->db->selectAll($this->test_table);
         $this->assertGreaterThan(1, $this->db->numRows());
         $this->assertArrayHasKey('id', $selectAll[0]);
