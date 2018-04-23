@@ -117,16 +117,18 @@ final class Database implements DBInterface{
      * @return array Returns array of results for the query that has just been run
      */
     public function query($sql, $variables = array(), $cache = true) {
-        try{
-            $this->sql = $sql;
-            $this->query = $this->db->prepare($this->sql);
-            $this->query->execute($variables);
-            if(strpos($this->sql, 'SELECT') !== false) {
-                return $this->query->fetchAll(PDO::FETCH_ASSOC);
+        if(!empty(trim($sql))){
+            try{
+                $this->sql = $sql;
+                $this->query = $this->db->prepare($this->sql);
+                $this->query->execute($variables);
+                if(strpos($this->sql, 'SELECT') !== false) {
+                    return $this->query->fetchAll(PDO::FETCH_ASSOC);
+                }
             }
-        }
-        catch(\Exception $e) {
-            $this->error($e);
+            catch(\Exception $e) {
+                $this->error($e);
+            }
         }
     }
     
