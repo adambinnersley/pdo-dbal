@@ -74,6 +74,20 @@ $db->select('test_table', array('id' => array('>=', 3)), array('name', 'email'))
 $db->select('test_table', array('id' => array('>=', 3)), array('name', 'email'), array('id' => 'DESC'));
 // Query Run = "SELECT `name`, `email` FROM `test_table` WHERE `id` >= 3 ORDER BY `id` DESC LIMIT 1;"
 
+// Usage of IN or NOT IN operator
+$db->select('test_table', array('id' => array('IN' => array(1, 2, 3))));
+// Query Run = "SELECT * FROM `test_table` WHERE `id` IN (1,2,3) LIMIT 1;"
+
+$db->select('test_table', array('id' => array('NOT IN' => array(2, 3))));
+// Query Run = "SELECT * FROM `test_table` WHERE `id` NOT IN (2,3) LIMIT 1;"
+
+// Usage of BETWEEN or NOT BETWEEN operator
+$db->select('test_table', array('id' => array('BETWEEN' => array(1, 3))));
+// Query Run = "SELECT * FROM `test_table` WHERE `id` BETWEEN 1 AND 3 LIMIT 1;"
+
+$db->select('test_table', array('id' => array('NOT BETWEEN' => array(2, 10))));
+// Query Run = "SELECT * FROM `test_table` WHERE `id` NOT BETWEEN 2 AND 10 LIMIT 1;"
+
 // The same functions can be run using selectAll() rather than select()
 
 $db->selectAll('test_table', array('id' => array('>=', 3)), array('name', 'email'), array('id' => 'DESC'), 150);

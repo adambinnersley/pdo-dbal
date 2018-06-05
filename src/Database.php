@@ -531,10 +531,11 @@ final class Database implements DBInterface{
             else{
                 foreach(array_values($value)[0] as $op => $array_value) {
                     $this->values[] = $array_value;
+                    $keys[] = '?';
                 }
                 $operator = key($value);
             }
-            return sprintf("`%s` %s", SafeString::makeSafe($field), Operators::getOperatorFormat($operator));
+            return sprintf("`%s` %s", SafeString::makeSafe($field),  sprintf(Operators::getOperatorFormat($operator), implode($keys, ', ')));
             
         }
         $this->values[] = $value;

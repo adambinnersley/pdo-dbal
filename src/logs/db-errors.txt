@@ -1,0 +1,4 @@
+05/06/2018 09:33:42 ERROR: SQLSTATE[HY000] [1045] Access denied for user 'wrong_username'@'localhost' (using password: YES) on 
+05/06/2018 09:33:42 ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'test_db.unknown_table' doesn't exist on SELECT * FROM `unknown_table`;
+05/06/2018 09:33:42 ERROR: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'text_field' cannot be null on INSERT INTO `test_table` (`id`, `name`, `text_field`, `number_field`) VALUES (?, ?, ?, ?);
+05/06/2018 09:33:43 ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'test_db.any_table' doesn't exist on TRUNCATE TABLE `any_table`

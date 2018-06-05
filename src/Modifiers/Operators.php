@@ -33,11 +33,11 @@ class Operators {
             'prepared' => true
         ),
         'IN' => array(
-            'format' => '%s ?',
+            'format' => 'IN (%s)',
             'prepared' => true
         ),
         'NOT IN' => array(
-            'format' => '%s ?',
+            'format' => 'NOT IN (%s)',
             'prepared' => true
         ),
         'BETWEEN' => array(
