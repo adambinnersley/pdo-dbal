@@ -524,6 +524,7 @@ final class Database implements DBInterface{
             return sprintf("`%s` %s", SafeString::makeSafe($field), Operators::getOperatorFormat($value));
         }
         elseif(is_array($value)) {
+            $keys = [];
             if(!is_array(array_values($value)[0])) {
                 $this->values[] = (isset($value[1]) ? $value[1] : array_values($value)[0]);
                 $operator = (isset($value[0]) ? $value[0] : key($value));
