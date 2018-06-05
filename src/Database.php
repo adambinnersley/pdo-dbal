@@ -536,7 +536,7 @@ final class Database implements DBInterface{
                 }
                 $operator = key($value);
             }
-            return sprintf("`%s` %s", SafeString::makeSafe($field),  sprintf(Operators::getOperatorFormat($operator), implode($keys, ', ')));
+            return sprintf("`%s` %s", SafeString::makeSafe($field), sprintf(Operators::getOperatorFormat($operator), implode($keys, ', ')));
             
         }
         $this->values[] = $value;
