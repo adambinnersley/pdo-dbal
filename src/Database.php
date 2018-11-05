@@ -114,17 +114,24 @@ class Database implements DBInterface{
      * This query function is used for more advanced SQL queries for which non of the other methods fit
      * @param string $sql This should be the SQL query which you wish to run
      * @param array $variables This should be an array of values to execute as the values in a prepared statement
-     * @return array Returns array of results for the query that has just been run
+     * @return array|boolean Returns array of results for the query that has just been run if select or returns true and false if executed successfully or not
      */
     public function query($sql, $variables = array(), $cache = true) {
         if(!empty(trim($sql))){
+            $this->sql = $sql;
+            $this->key = md5($this->sql.serialize($variables));
+            if($this->logQueries) {$this->writeQueryToLog();}
+            if($cache && $this->cacheEnabled && $this->getCache($this->key)) {
+                return $this->cacheValue;
+            }
             try{
-                $this->sql = $sql;
                 $this->query = $this->db->prepare($this->sql);
-                $this->query->execute($variables);
+                $result = $this->query->execute($variables);
                 if(strpos($this->sql, 'SELECT') !== false) {
-                    return $this->query->fetchAll(PDO::FETCH_ASSOC);
+                    $result = $this->query->fetchAll(PDO::FETCH_ASSOC);
+                    if($cache && $this->cacheEnabled) {$this->setCache($this->key, $result);}
                 }
+                return $result;
             }
             catch(\Exception $e) {
                 $this->error($e);
@@ -330,11 +337,9 @@ class Database implements DBInterface{
             $file = $this->logLocation.'db-errors.txt';
             $current = file_get_contents($file);
             $current .= date('d/m/Y H:i:s')." ERROR: ".$error->getMessage()." on ".$this->sql."\n";
-            file_put_contents($file, $current);
+            file_put_contents($file, $current); 
         }
-        if($this->displayErrors) {
-            die('ERROR: '.$error->getMessage().' on '.$this->sql);
-        }
+        die($this->displayErrors ? 'ERROR: '.$error->getMessage().' on '.$this->sql : 0);
     }
     
     /**
