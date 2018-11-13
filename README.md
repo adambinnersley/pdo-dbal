@@ -26,7 +26,7 @@ composer require adamb/database
 - Connects to a MySQL database via PDO
 - Simplify queries to SELECT / INSERT / UPDATE and DELETE
 - Built in prepared statements 
-- Compatible with PHP5.3 and later
+- Compatible with PHP5.6 and later
 
 ## License
 
