@@ -51,9 +51,10 @@ class Database implements DBInterface{
      * @param boolean $persistent If you want a persistent database connection set to true
      * @param string $type The type of connection that you wish to make can be 'mysql', 'cubrid', 'dblib', 'mssql', 'odbc', 'pgsql, or 'sqlite'
      * @param int $port This should be the port number of the MySQL database connection
+     * @param string|false $logLocation  This should be where you wish the logs to be stored leave as false if default location is adequate
      */
-    public function __construct($hostname, $username, $password, $database, $backuphost = false, $cache = false, $persistent = false, $type = 'mysql', $port = 3306) {
-        $this->setLogLocation();
+    public function __construct($hostname, $username, $password, $database, $backuphost = false, $cache = false, $persistent = false, $type = 'mysql', $port = 3306, $logLocation = false) {
+        $this->setLogLocation($logLocation);
         try{
             $this->connectToServer($username, $password, $database, $hostname, $persistent, $type, $port);
         }
