@@ -11,7 +11,7 @@ class MemcacheCacheTest extends CacheTest{
     /**
      * @covers DBAL\Caching\MemcacheCache
      */
-    public function setUp() {
+    public function setUp(): void {
         if(!extension_loaded('memcache')) {
             $this->markTestSkipped(
                 'The memcache extension is not available.'

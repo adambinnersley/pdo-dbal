@@ -16,7 +16,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      */
-    public function setUp(){
+    public function setUp(): void {
         $this->connectToLiveDB();
         if(!$this->db->isConnected()){
             $this->markTestSkipped(
@@ -41,7 +41,7 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::__destruct
      * @covers \DBAL\Database::closeDatabase
      */
-    public function tearDown(){
+    public function tearDown(): void {
         $this->db = null;
     }
     

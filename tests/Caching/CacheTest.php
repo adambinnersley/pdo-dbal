@@ -10,7 +10,7 @@ abstract class CacheTest extends TestCase{
         
     protected $cache;
     
-    public function setUp() {
+    public function setUp(): void {
         $this->cache->connect($this->host, $this->port);
         if(!$this->cache->save('servicetest', 'isactive', 60)){
             $this->markTestSkipped(
@@ -19,7 +19,7 @@ abstract class CacheTest extends TestCase{
         }
     }
     
-    public function tearDown() {
+    public function tearDown(): void {
         unset($this->cache);
     }
     

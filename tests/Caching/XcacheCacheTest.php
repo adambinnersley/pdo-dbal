@@ -8,7 +8,7 @@ class XcacheCacheTest extends CacheTest{
     /**
      * @covers DBAL\Caching\XcacheCache
      */
-    public function setUp() {
+    public function setUp(): void {
         if(!extension_loaded('xcache')) {
             $this->markTestSkipped(
                 'The XCache extension is not available.'
