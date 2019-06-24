@@ -181,11 +181,11 @@ class Database implements DBInterface{
      * Returns a single column value for a given query
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-     * @param array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+     * @param array $fields This should be the records you wish to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param int $colNum This should be the column number you wish to get (starts at 0)
      * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
-     * @return mixed If a result is found will return the value of the colum given else will return false
+     * @return mixed If a result is found will return the value of the column given else will return false
      */
     public function fetchColumn($table, $where = array(), $fields = '*', $colNum = 0, $order = array(), $cache = true) {
         $this->buildSelectQuery(SafeString::makeSafe($table), $where, $fields, $order, 1);
@@ -217,7 +217,7 @@ class Database implements DBInterface{
      * @param string $table This should be the table you wish to update the values for
      * @param array $records This should be the field names and new values in the format of array('fieldname' => 'newvalue', 'fieldname2' => 'newvalue2', etc.)
      * @param array $where Should be the field names and values you wish to update in the form of an array e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-     * @param int $limit The number of results you want to return 0 is default and will update all results that match the query, else should be formated as a standard integer
+     * @param int $limit The number of results you want to return 0 is default and will update all results that match the query, else should be formatted as a standard integer
      * @return boolean Returns true if update is successful else returns false
      */
     public function update($table, $records, $where = array(), $limit = 0) {
