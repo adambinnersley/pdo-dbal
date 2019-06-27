@@ -6,17 +6,13 @@ build:
     project_setup:
         before:
             - mysql -e "CREATE DATABASE IF NOT EXISTS test_db"
-            
-    tests:
-        override:
-            -
-                command: 'vendor/bin/phpunit --coverage-clover=coverage'
-                coverage:
-                    file: 'coverage'
-                    format: 'clover'
 
 before_commands:
     - "composer install --prefer-source"
+
+tools:
+    php_code_coverage:
+        test_command: vendor/bin/phpunit
 
 checks:
     php:
