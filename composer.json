@@ -20,7 +20,8 @@
     },
     "autoload": {
         "psr-4": {
-            "DBAL\\": "src/"
+            "DBAL\\": "src/",
+            "DBAL\\Modifiers\\": "src/Modifiers/"
         }
     },
     "autoload-dev": {
