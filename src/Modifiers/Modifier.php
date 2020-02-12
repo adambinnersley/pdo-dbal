@@ -97,14 +97,17 @@ class Modifier {
      * @return boolean If all of the fields exist and are not empty will return true else returns false 
      */
     public static function arrayMustContainFields($mustContain, $valueArray) {
-        if(is_array($mustContain) && is_array($valueArray)){
-            foreach($mustContain as $essential){
-                if(!array_key_exists($essential, $valueArray) || !self::isRequiredString($valueArray[$essential])){
-                    return false;
+        if(is_array($mustContain) && !empty($mustContain)) {
+            if(is_array($valueArray)) {
+                foreach($mustContain as $essential) {
+                    if(!array_key_exists($essential, $valueArray) || !self::isRequiredString($valueArray[$essential])) {
+                        return false;
+                    }
                 }
+                return true;
             }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }
