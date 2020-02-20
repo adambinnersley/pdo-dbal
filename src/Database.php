@@ -543,7 +543,7 @@ class Database implements DBInterface{
                 }
                 $operator = key($value);
             }
-            return sprintf("`%s` %s", SafeString::makeSafe($field), sprintf(Operators::getOperatorFormat($operator), implode($keys, ', ')));
+            return sprintf("`%s` %s", SafeString::makeSafe($field), sprintf(Operators::getOperatorFormat($operator), implode(', ', $keys)));
             
         }
         $this->values[] = $value;
@@ -557,7 +557,7 @@ class Database implements DBInterface{
     protected function bindValues($values) {
         if(is_array($values)) {
             foreach($values as $i => $value) {
-                if(is_numeric($value) && intval($value) == $value && $value[0] != 0) {$type = PDO::PARAM_INT; $value = intval($value);}
+                if(is_numeric($value) && intval($value) == $value && (isset($value[0]) && $value[0] != 0 || !isset($value[0]))) {$type = PDO::PARAM_INT; $value = intval($value);}
                 elseif(is_null($value) || $value === 'NULL') {$type = PDO::PARAM_NULL; $value = NULL;}
                 elseif(is_bool($value)) {$type = PDO::PARAM_BOOL;}
                 else{$type = PDO::PARAM_STR;}
