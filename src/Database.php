@@ -46,8 +46,8 @@ class Database implements DBInterface{
      * @param string $username This should be the username for the chosen database
      * @param string $password This should be the password for the chosen database 
      * @param string $database This should be the database that you wish to connect to
-     * @param string|false $backuphost If you have a replication server set up put the hostname or IP address incase the primary server goes down
-     * @param object|false $cache If you want to cache the queries with Memcache(d)/Redis/APC/Xcache This should be the object else set to false
+     * @param string|false $backuphost If you have a replication server set up put the hostname or IP address to use if the primary server goes down
+     * @param object|false $cache If you want to cache the queries with Memcache(d)/Redis/APC/XCache This should be the object else set to false
      * @param boolean $persistent If you want a persistent database connection set to true
      * @param string $type The type of connection that you wish to make can be 'mysql', 'cubrid', 'dblib', 'mssql', 'odbc', 'pgsql, or 'sqlite'
      * @param int $port This should be the port number of the MySQL database connection
@@ -147,7 +147,7 @@ class Database implements DBInterface{
      * Returns a single record for a select query for the chosen table
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-     * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+     * @param string|array $fields This should be the records you wish to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
      * @return array Returns a single table record as the standard array when running SQL queries
@@ -160,9 +160,9 @@ class Database implements DBInterface{
      * Returns a multidimensional array of the results from the selected table given the given parameters
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-     * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+     * @param string|array $fields This should be the records you wish to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
-     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formatted either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
      * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
      * @return array Returns a multidimensional array with the chosen fields from the table
      */
@@ -230,7 +230,7 @@ class Database implements DBInterface{
      * Deletes records from the given table based on the variables given
      * @param string $table This should be the table you wish to delete the records from
      * @param array $where This should be an array of for the where statement
-     * @param int $limit The number of results you want to return 0 is default and will delete all results that match the query, else should be formated as a standard integer
+     * @param int $limit The number of results you want to return 0 is default and will delete all results that match the query, else should be formatted as a standard integer
      */
     public function delete($table, $where, $limit = 0) {
         $this->sql = sprintf("DELETE FROM `%s` %s%s;", SafeString::makeSafe($table), $this->where($where), $this->limit($limit));
@@ -367,9 +367,9 @@ class Database implements DBInterface{
      * Build the SQL query but doesn't execute it
      * @param string $table This should be the table you wish to select the values from
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-     * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+     * @param string|array $fields This should be the records you wish to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
-     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+     * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formatted either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
      */
     protected function buildSelectQuery($table, $where = [], $fields = '*', $order = [], $limit = 0) {
         if(is_array($fields)) {
