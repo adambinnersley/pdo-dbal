@@ -481,7 +481,7 @@ class Database implements DBInterface{
     private function limit($limit = 0) {
         if(is_array($limit) && !empty(array_filter($limit))) {
             foreach($limit as $start => $end) {
-                 return " LIMIT ".intval($start).", ".intval($end);
+                 return " LIMIT ".max(intval($start), 0).", ".max(intval($end), 0);
             }
         }
         elseif((int)$limit > 0) {
