@@ -393,17 +393,16 @@ class Database implements DBInterface{
     protected function executeQuery($cache = true) {
         if($this->logQueries) {$this->writeQueryToLog();}
         if($cache && $this->cacheEnabled && $this->getCache($this->key)) {
+            $this->values = [];
             return $this->cacheValue;
         }
         try{
             $this->query = $this->db->prepare($this->sql);
             $this->bindValues($this->values);
             $this->query->execute();
-            unset($this->values);
             $this->values = [];
         }
         catch(\Exception $e) {
-            unset($this->values);
             $this->values = [];
             $this->error($e);
         }
