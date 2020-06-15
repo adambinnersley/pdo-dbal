@@ -153,15 +153,30 @@ $db->count('test_table', array('name' => 'Bob'));
 ```
 
 ### 7. Query
-```php
 
-Any query can be run using the query command by passing the SQL query and values
+Any other queries can be run using the query command by passing the SQL query and values
+```php
 
 $db->query("SELECT * FROM `test_table` WHERE `name` = ? OR `name` => ?;", array('John', 'Phil'));
 // Query Run = "SELECT * FROM `test_table` WHERE `name` = 'John' OR `name` => 'Phil';";
 
 $db->query("UPDATE `test_table` SET `name` = 'Karl' WHERE `name` = ? OR `name` => ?;", array('John', 'Phil'));
 // Query Run = "UPDATE `test_table` SET `name` = 'Karl' WHERE `name` = 'John' OR `name` => 'Phil';";
+
+$db->query("SELECT * FROM `test_table` WHERE `field1` = ? AND (`field2` => ? OR `field3` => ?);", array('value1', 'value2', 'value3'));
+// Query Run = "SELECT * FROM `test_table` WHERE `field1` = 'value1' AND (`field2` => 'value2' OR `field3` => 'value3');";
+
+$db->query("SELECT * FROM `test_table` WHERE `field1` = ? UNION SELECT * FROM `another_table` WHERE `another_field` = ?;", array('value1', 'value2'));
+// Query Run = SELECT * FROM `test_table` WHERE `field1` = 'value1' UNION SELECT * FROM `another_table` WHERE `another_field` = 'value2';";
+
+$db->query("SELECT * FROM `test_table` WHERE `field1` = :search UNION SELECT * FROM `another_table` WHERE `another_field` = :search;", array(':search' => 'value1'));
+// Query Run = SELECT * FROM `test_table` WHERE `field1` = 'value1' UNION SELECT * FROM `another_table` WHERE `another_field` = 'value1';";
+
+$db->query("SELECT `test_table`.`field1`, `test_table`.`field2`, `another_table`.`field1` FROM `test_table` INNER JOIN `another_table` ON `test_table`.`reference_field` = `another_table`.`some_field`;");
+// Query Run = SELECT `test_table`.`field1`, `test_table`.`field2`, `another_table`.`field1` FROM `test_table` INNER JOIN `another_table` ON `test_table`.`reference_field` = `another_table`.`some_field`;";
+
+$db->query("SELECT `test_table`.`field1`, `test_table`.`field2`, `another_table`.`field1` FROM `test_table` INNER JOIN `another_table` ON `test_table`.`reference_field` = `another_table`.`some_field` AND `test_table`.`field1` <= ? LIMIT 100;", array('value'));
+// Query Run = SELECT `test_table`.`field1`, `test_table`.`field2`, `another_table`.`field1` FROM `test_table` INNER JOIN `another_table` ON `test_table`.`reference_field` = `another_table`.`some_field` AND `test_table`.`field1` <= 'value' LIMIT 100;";
 
 ```
 
