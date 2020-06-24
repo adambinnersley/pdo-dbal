@@ -28,7 +28,7 @@ class Database implements DBInterface{
     protected $modified = false;
 
     private $query;
-    private $values = [];
+    public $values = [];
     private $prepare = [];
     
     private static $connectors = array(
@@ -131,6 +131,7 @@ class Database implements DBInterface{
             try{
                 $this->query = $this->db->prepare($this->sql);
                 $result = $this->query->execute($variables);
+                $this->values = [];
                 if(strpos($this->sql, 'SELECT') !== false) {
                     $result = $this->query->fetchAll(PDO::FETCH_ASSOC);
                     if($cache && $this->cacheEnabled) {$this->setCache($this->key, $result);}
@@ -413,7 +414,7 @@ class Database implements DBInterface{
      * @param array $where This should be an array that you wish to create the where query for in the for array('field1' => 'test') or array('field1' => array('>=', 0))
      * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
      */
-    protected function where($where) {
+    public function where($where) {
         if(is_array($where) && !empty($where)) {
             $wherefields = [];
             foreach($where as $field => $value) {
@@ -456,7 +457,7 @@ class Database implements DBInterface{
      * @param boolean $insert If this is an insert statement should be set to true to create the correct amount of queries for the prepared statement
      * @return string The fields list will be returned as a string to insert into the SQL query
      */
-    protected function fields($records, $insert = false) {
+    public function fields($records, $insert = false) {
         $fields = [];
         
         foreach($records as $field => $value) {
