@@ -413,7 +413,7 @@ class Database implements DBInterface{
      * @param array $where This should be an array that you wish to create the where query for in the for array('field1' => 'test') or array('field1' => array('>=', 0))
      * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
      */
-    public function where($where) {
+    protected function where($where) {
         if(is_array($where) && !empty($where)) {
             $wherefields = [];
             foreach($where as $field => $value) {
@@ -456,7 +456,7 @@ class Database implements DBInterface{
      * @param boolean $insert If this is an insert statement should be set to true to create the correct amount of queries for the prepared statement
      * @return string The fields list will be returned as a string to insert into the SQL query
      */
-    public function fields($records, $insert = false) {
+    protected function fields($records, $insert = false) {
         $fields = [];
         
         foreach($records as $field => $value) {
