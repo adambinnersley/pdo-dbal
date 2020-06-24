@@ -413,7 +413,7 @@ class Database implements DBInterface{
      * @param array $where This should be an array that you wish to create the where query for in the for array('field1' => 'test') or array('field1' => array('>=', 0))
      * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
      */
-    private function where($where) {
+    public function where($where) {
         if(is_array($where) && !empty($where)) {
             $wherefields = [];
             foreach($where as $field => $value) {
@@ -431,7 +431,7 @@ class Database implements DBInterface{
      * @param array|string $order This should be either set to array('fieldname' => 'ASC/DESC') or RAND()
      * @return string|false If the SQL query has an valid order by will return a string else returns false
      */
-    private function orderBy($order) {
+    public function orderBy($order) {
         if(is_array($order) && !empty(array_filter($order))) {
             $string = [];
             foreach($order as $fieldorder => $fieldvalue) {
@@ -456,7 +456,7 @@ class Database implements DBInterface{
      * @param boolean $insert If this is an insert statement should be set to true to create the correct amount of queries for the prepared statement
      * @return string The fields list will be returned as a string to insert into the SQL query
      */
-    private function fields($records, $insert = false) {
+    public function fields($records, $insert = false) {
         $fields = [];
         
         foreach($records as $field => $value) {
@@ -477,7 +477,7 @@ class Database implements DBInterface{
      * @param integer|array $limit This should either be set as an integer or should be set as an array with a start and end value  
      * @return string|false Will return the LIMIT string for the current query if it is valid else returns false
      */
-    private function limit($limit = 0) {
+    public function limit($limit = 0) {
         if(is_array($limit) && !empty(array_filter($limit))) {
             foreach($limit as $start => $end) {
                  return " LIMIT ".max(intval($start), 0).", ".max(intval($end), 0);
