@@ -91,8 +91,8 @@ class Database implements DBInterface {
 			$this->database = $database;
 			$this->db       = new PDO( sprintf( self::$connectors[ $type ], $hostname, $port, $database ), $username, $password,
 				array_merge(
-					( $persistent !== false ? array( PDO::ATTR_PERSISTENT => true ) : array() ),
-					( $type === 'mysql' ? array( PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_EMULATE_PREPARES => true ) : array() )
+					( $persistent !== false ? array( PDO::ATTR_PERSISTENT => true ) : [] ),
+					( $type === 'mysql' ? array( PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_EMULATE_PREPARES => true ) : [] )
 				)
 			);
 			$this->db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -121,7 +121,7 @@ class Database implements DBInterface {
 	 *
 	 * @return array Returns array of results for the query that has just been run
 	 */
-	public function query( $sql, $variables = array(), $cache = true ) {
+	public function query( $sql, $variables = [], $cache = true ) {
 		try {
 			$this->sql   = $sql;
 			$this->query = $this->db->prepare( $this->sql );
@@ -145,7 +145,7 @@ class Database implements DBInterface {
 	 *
 	 * @return array Returns a single table record as the standard array when running SQL queries
 	 */
-	public function select( $table, $where = array(), $fields = '*', $order = array(), $cache = true ) {
+	public function select( $table, $where = [], $fields = '*', $order = [], $cache = true ) {
 		return $this->selectAll( $table, $where, $fields, $order, 1, $cache );
 	}
 
@@ -161,7 +161,7 @@ class Database implements DBInterface {
 	 *
 	 * @return array Returns a multidimensional array with the chosen fields from the table
 	 */
-	public function selectAll( $table, $where = array(), $fields = '*', $order = array(), $limit = 0, $cache = true ) {
+	public function selectAll( $table, $where = [], $fields = '*', $order = [], $limit = 0, $cache = true ) {
 		$this->buildSelectQuery( SafeString::makeSafe( $table ), $where, $fields, $order, $limit );
 		$result = $this->executeQuery( $cache );
 		if ( ! $result ) {
@@ -191,7 +191,7 @@ class Database implements DBInterface {
 	 *
 	 * @return mixed If a result is found will return the value of the colum given else will return false
 	 */
-	public function fetchColumn( $table, $where = array(), $fields = '*', $colNum = 0, $order = array(), $cache = true ) {
+	public function fetchColumn( $table, $where = [], $fields = '*', $colNum = 0, $order = [], $cache = true ) {
 		$this->buildSelectQuery( SafeString::makeSafe( $table ), $where, $fields, $order, 1 );
 		$result = $this->executeQuery( $cache );
 		if ( ! $result ) {
@@ -233,7 +233,7 @@ class Database implements DBInterface {
 	 *
 	 * @return boolean Returns true if update is successful else returns false
 	 */
-	public function update( $table, $records, $where = array(), $limit = 0 ) {
+	public function update( $table, $records, $where = [], $limit = 0 ) {
 		$this->sql = sprintf( "UPDATE `%s` SET %s %s%s;", SafeString::makeSafe( $table ), $this->fields( $records ), $this->where( $where ), $this->limit( $limit ) );
 		$this->executeQuery( false );
 
@@ -263,7 +263,7 @@ class Database implements DBInterface {
 	 *
 	 * @return int Returns the number of results
 	 */
-	public function count( $table, $where = array(), $cache = true ) {
+	public function count( $table, $where = [], $cache = true ) {
 		$this->sql = sprintf( "SELECT count(*) FROM `%s`%s;", SafeString::makeSafe( $table ), $this->where( $where ) );
 		$this->key = md5( $this->database . $this->sql . serialize( $this->values ) );
 
@@ -407,9 +407,9 @@ class Database implements DBInterface {
 	 * @param array         $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
 	 * @param integer|array $limit  The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
 	 */
-	protected function buildSelectQuery( $table, $where = array(), $fields = '*', $order = array(), $limit = 0 ) {
+	protected function buildSelectQuery( $table, $where = [], $fields = '*', $order = [], $limit = 0 ) {
 		if ( is_array( $fields ) ) {
-			$selectfields = array();
+			$selectfields = [];
 			foreach ( $fields as $field => $value ) {
 				$selectfields[] = sprintf( "`%s`", SafeString::makeSafe( $value ) );
 			}
@@ -458,7 +458,7 @@ class Database implements DBInterface {
 	 */
 	private function where( $where ) {
 		if ( is_array( $where ) && ! empty( $where ) ) {
-			$wherefields = array();
+			$wherefields = [];
 			foreach ( $where as $field => $value ) {
 				$wherefields[] = $this->formatValues( $field, $value );
 			}
@@ -479,7 +479,7 @@ class Database implements DBInterface {
 	 */
 	private function orderBy( $order ) {
 		if ( is_array( $order ) && ! empty( array_filter( $order ) ) ) {
-			$string = array();
+			$string = [];
 			foreach ( $order as $fieldorder => $fieldvalue ) {
 				if ( ! empty( $fieldorder ) && ! empty( $fieldvalue ) ) {
 					$string[] = sprintf( "`%s` %s", SafeString::makeSafe( $fieldorder ), strtoupper( SafeString::makeSafe( $fieldvalue ) ) );
@@ -505,7 +505,7 @@ class Database implements DBInterface {
 	 * @return string The fields list will be returned as a string to insert into the SQL query
 	 */
 	private function fields( $records, $insert = false ) {
-		$fields = array();
+		$fields = [];
 
 		foreach ( $records as $field => $value ) {
 			if ( $insert === true ) {
