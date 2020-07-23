@@ -15,7 +15,7 @@ use PDO;
 class Database implements DBInterface {
 	protected $db;
 	public $sql;
-	private $key;
+	protected $key;
 
 	protected $logLocation;
 	public $logErrors = true;
@@ -28,11 +28,11 @@ class Database implements DBInterface {
 	protected $cacheValue;
 	protected $modified = false;
 
-	private $query;
-	private $values = [];
-	private $prepare = [];
+	protected $query;
+	protected $values = [];
+	protected $prepare = [];
 
-	private static $connectors = array(
+	protected static $connectors = array(
 		'cubrid' => 'cubrid:host=%s;port=%d;dbname=%s',
 		'dblib'  => 'dblib:host=%s:%d;dbname=%s',
 		'mssql'  => 'sqlsrv:Server=%s,%d;Database=%s',
@@ -374,7 +374,7 @@ class Database implements DBInterface {
 	 *
 	 * @param \Exception $error This should be an instance of Exception
 	 */
-	private function error( $error ) {
+	protected function error( $error ) {
 		if ( $this->logErrors ) {
 			$file    = $this->logLocation . 'db-errors.txt';
 			$current = file_get_contents( $file );
@@ -461,7 +461,7 @@ class Database implements DBInterface {
 	 *
 	 * @return string|false If the where query is an array will return the where string and set the values else returns false if no array sent
 	 */
-	private function where( $where ) {
+	protected function where( $where ) {
 		if ( is_array( $where ) && ! empty( $where ) ) {
 			$wherefields = [];
 			foreach ( $where as $field => $value ) {
@@ -482,7 +482,7 @@ class Database implements DBInterface {
 	 *
 	 * @return string|false If the SQL query has an valid order by will return a string else returns false
 	 */
-	private function orderBy( $order ) {
+	protected function orderBy( $order ) {
 		if ( is_array( $order ) && ! empty( array_filter( $order ) ) ) {
 			$string = [];
 			foreach ( $order as $fieldorder => $fieldvalue ) {
@@ -509,7 +509,7 @@ class Database implements DBInterface {
 	 *
 	 * @return string The fields list will be returned as a string to insert into the SQL query
 	 */
-	private function fields( $records, $insert = false ) {
+	protected function fields( $records, $insert = false ) {
 		$fields = [];
 
 		foreach ( $records as $field => $value ) {
@@ -532,7 +532,7 @@ class Database implements DBInterface {
 	 *
 	 * @return string|false Will return the LIMIT string for the current query if it is valid else returns false
 	 */
-	private function limit( $limit = 0 ) {
+	protected function limit( $limit = 0 ) {
 		if ( is_array( $limit ) && ! empty( array_filter( $limit ) ) ) {
 			foreach ( $limit as $start => $end ) {
 				return " LIMIT " . intval( $start ) . ", " . intval( $end );
