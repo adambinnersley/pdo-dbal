@@ -3,6 +3,7 @@ namespace DBAL;
 
 use DBAL\Modifiers\Operators;
 use DBAL\Modifiers\SafeString;
+use Exception;
 use PDO;
 
 /**
@@ -43,23 +44,25 @@ class Database implements DBInterface {
 	/**
 	 * Connect to database using PDO connection
 	 *
-	 * @param string       $hostname   This should be the host of the database e.g. 'localhost'
-	 * @param string       $username   This should be the username for the chosen database
-	 * @param string       $password   This should be the password for the chosen database
-	 * @param string       $database   This should be the database that you wish to connect to
-	 * @param string|false $backuphost If you have a replication server set up put the hostname or IP address incase the primary server goes down
-	 * @param object|false $cache      If you want to cache the queries with Memcache(d)/Redis/APC/Xcache This should be the object else set to false
-	 * @param boolean      $persistent If you want a persistent database connection set to true
-	 * @param string       $type       The type of connection that you wish to make can be 'mysql', 'cubrid', 'dblib', 'mssql', 'odbc', 'pgsql, or 'sqlite'
-	 * @param int          $port       This should be the port number of the MySQL database connection
+	 * @param string       $hostname    This should be the host of the database e.g. 'localhost'
+	 * @param string       $username    This should be the username for the chosen database
+	 * @param string       $password    This should be the password for the chosen database
+	 * @param string       $database    This should be the database that you wish to connect to
+	 * @param string|false $backupHost  If you have a replication server set up put the hostname or IP address in case the primary server goes down
+	 * @param object|false $cache       If you want to cache the queries with Memcache(d)/Redis/APC/Xcache This should be the object else set to false
+	 * @param boolean      $persistent  If you want a persistent database connection set to true
+	 * @param string       $type        The type of connection that you wish to make can be 'mysql', 'cubrid', 'dblib', 'mssql', 'odbc', 'pgsql, or 'sqlite'
+	 * @param int          $port        This should be the port number of the MySQL database connection
+	 * @param string|false $logLocation This should be where you wish the logs to be stored leave as false if default location is adequate
+	 * @param array        $options     Add any additional PDO connection options here
 	 */
-	public function __construct( $hostname, $username, $password, $database, $backuphost = false, $cache = false, $persistent = false, $type = 'mysql', $port = 3306 ) {
-		$this->setLogLocation();
+	public function __construct( $hostname, $username, $password, $database, $backupHost = false, $cache = false, $persistent = false, $type = 'mysql', $port = 3306, $logLocation = false, $options = [] ) {
+		$this->setLogLocation( $logLocation );
 		try {
-			$this->connectToServer( $username, $password, $database, $hostname, $persistent, $type, $port );
-		} catch ( \Exception $e ) {
-			if ( $backuphost !== false ) {
-				$this->connectToServer( $username, $password, $database, $backuphost, $persistent, $type, $port );
+			$this->connectToServer( $username, $password, $database, $hostname, $persistent, $type, $port, $options );
+		} catch ( Exception $e ) {
+			if ( $backupHost !== false ) {
+				$this->connectToServer( $username, $password, $database, $backupHost, $persistent, $type, $port, $options );
 			}
 			$this->error( $e );
 		}
@@ -85,14 +88,16 @@ class Database implements DBInterface {
 	 * @param boolean $persistent If you want a persistent database connection set to true
 	 * @param string  $type       The type of connection that you wish to make can be 'mysql', 'cubrid', 'dblib', 'mssql', 'pgsql, or 'sqlite'
 	 * @param int     $port       The port number to connect to the MySQL server
+	 * @param array   $options    Add any additional PDO connection options here
 	 */
-	protected function connectToServer( $username, $password, $database, $hostname, $persistent = false, $type = 'mysql', $port = 3306 ) {
+	protected function connectToServer( $username, $password, $database, $hostname, $persistent = false, $type = 'mysql', $port = 3306, $options = [] ) {
 		if ( ! $this->db ) {
 			$this->database = $database;
 			$this->db       = new PDO( sprintf( self::$connectors[ $type ], $hostname, $port, $database ), $username, $password,
 				array_merge(
-					( $persistent !== false ? array( PDO::ATTR_PERSISTENT => true ) : [] ),
-					( $type === 'mysql' ? array( PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_EMULATE_PREPARES => true ) : [] )
+					( $persistent !== false ? [ PDO::ATTR_PERSISTENT => true ] : [] ),
+					( $type === 'mysql' ? [ PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_EMULATE_PREPARES => true ] : [] ),
+					( is_array( $options ) ? $options : [] )
 				)
 			);
 			$this->db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -348,7 +353,7 @@ class Database implements DBInterface {
 	/**
 	 * Sets the location of the log files
 	 *
-	 * @param string $location This should be where you wish the logs to be stored
+	 * @param string|boolean $location This should be where you wish the logs to be stored
 	 *
 	 * @return $this
 	 */
