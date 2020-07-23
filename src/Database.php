@@ -1,10 +1,12 @@
 <?php
 namespace DBAL;
 
+use DBAL\Caching\CacheInterface;
 use DBAL\Modifiers\Operators;
 use DBAL\Modifiers\SafeString;
 use Exception;
 use PDO;
+use PDOStatement;
 
 /**
  * PDO Database connection class
@@ -13,33 +15,61 @@ use PDO;
  * @version PDO Database Class
  */
 class Database implements DBInterface {
+
+	/* @var PDO */
 	protected $db;
+
+	/* @var string */
 	public $sql;
+
+	/* @var string */
 	protected $key;
 
+	/* @var string */
 	protected $logLocation;
+
+	/* @var bool */
 	public $logErrors = true;
+
+	/* @var bool */
 	public $logQueries = false;
+
+	/* @var bool */
 	public $displayErrors = false;
 
+	/* @var string */
 	protected $database;
+
+	/* @var bool */
 	protected $cacheEnabled = false;
+
+	/* @var bool|CacheInterface */
 	protected $cacheObj;
+
+	/* @var mixed */
 	protected $cacheValue;
+
+	/* @var bool */
 	protected $modified = false;
 
+	/* @var bool|PDOStatement */
 	protected $query;
+
+	/* @var array */
 	protected $values = [];
+
+	/* @var array */
 	protected $prepare = [];
 
-	protected static $connectors = array(
+	/* @var array */
+	protected static $connectors = [
 		'cubrid' => 'cubrid:host=%s;port=%d;dbname=%s',
 		'dblib'  => 'dblib:host=%s:%d;dbname=%s',
 		'mssql'  => 'sqlsrv:Server=%s,%d;Database=%s',
 		'mysql'  => 'mysql:host=%s;port=%d;dbname=%s',
 		'pgsql'  => 'pgsql:host=%s;port=%d;dbname=%s',
 		'sqlite' => 'sqlite::memory:',
-	);
+	];
 
 	/**
 	 * Connect to database using PDO connection
@@ -121,10 +151,11 @@ class Database implements DBInterface {
 	/**
 	 * This query function is used for more advanced SQL queries for which non of the other methods fit
 	 *
-	 * @param string $sql       This should be the SQL query which you wish to run
-	 * @param array  $variables This should be an array of values to execute as the values in a prepared statement
+	 * @param string  $sql       This should be the SQL query which you wish to run
+	 * @param array   $variables This should be an array of values to execute as the values in a prepared statement
+	 * @param boolean $cache     If the query should be cached or loaded from cache set to true else set to false
 	 *
-	 * @return array Returns array of results for the query that has just been run
+	 * @return boolean|array Returns array of results for the query that has just been run if select or returns true and false if executed successfully or not
 	 */
 	public function query( $sql, $variables = [], $cache = true ) {
 		try {
@@ -134,18 +165,20 @@ class Database implements DBInterface {
 			if ( strpos( $this->sql, 'SELECT' ) !== false ) {
 				return $this->query->fetchAll( PDO::FETCH_ASSOC );
 			}
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->error( $e );
 		}
+
+		return false;
 	}
 
 	/**
 	 * Returns a single record for a select query for the chosen table
 	 *
 	 * @param string       $table  This should be the table you wish to select the values from
-	 * @param array        $where  Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+	 * @param array        $where  Should be the field names and values you wish to use as the where query e.g. array('fieldName' => 'value', 'fieldName2' => 'value2', etc).
 	 * @param string|array $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
-	 * @param array        $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
+	 * @param array        $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldName' => 'ASC') or array("'fieldName', 'fieldName2'" => 'DESC')
 	 * @param boolean      $cache  If the query should be cached or loaded from cache set to true else set to false
 	 *
 	 * @return array Returns a single table record as the standard array when running SQL queries
@@ -158,13 +191,13 @@ class Database implements DBInterface {
 	 * Returns a multidimensional array of the results from the selected table given the given parameters
 	 *
 	 * @param string        $table  This should be the table you wish to select the values from
-	 * @param array         $where  Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+	 * @param array         $where  Should be the field names and values you wish to use as the where query e.g. array('fieldName' => 'value', 'fieldName2' => 'value2', etc).
 	 * @param string|array  $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
-	 * @param array         $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
-	 * @param integer|array $limit  The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+	 * @param array         $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldName' => 'ASC') or array("'fieldName', 'fieldName2'" => 'DESC')
+	 * @param integer|array $limit  The number of results you want to return 0 is default and returns all results, else should be formatted either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
 	 * @param boolean       $cache  If the query should be cached or loaded from cache set to true else set to false
 	 *
-	 * @return array Returns a multidimensional array with the chosen fields from the table
+	 * @return boolean|array Returns a multidimensional array with the chosen fields from the table
 	 */
 	public function selectAll( $table, $where = [], $fields = '*', $order = [], $limit = 0, $cache = true ) {
 		$this->buildSelectQuery( SafeString::makeSafe( $table ), $where, $fields, $order, $limit );
@@ -181,20 +214,20 @@ class Database implements DBInterface {
 			}
 		}
 
-		return $result ? $result : false;
+		return $result ?? false;
 	}
 
 	/**
 	 * Returns a single column value for a given query
 	 *
-	 * @param string  $table  This should be the table you wish to select the values from
-	 * @param array   $where  Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-	 * @param array   $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
-	 * @param int     $colNum This should be the column number you wish to get (starts at 0)
-	 * @param array   $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
-	 * @param boolean $cache  If the query should be cached or loaded from cache set to true else set to false
+	 * @param string       $table  This should be the table you wish to select the values from
+	 * @param array        $where  Should be the field names and values you wish to use as the where query e.g. array('fieldName' => 'value', 'fieldName2' => 'value2', etc).
+	 * @param array|string $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
+	 * @param int          $colNum This should be the column number you wish to get (starts at 0)
+	 * @param array        $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldName' => 'ASC') or array("'fieldName', 'fieldName2'" => 'DESC') so it can be done in both directions
+	 * @param boolean      $cache  If the query should be cached or loaded from cache set to true else set to false
 	 *
-	 * @return mixed If a result is found will return the value of the colum given else will return false
+	 * @return mixed If a result is found will return the value of the column given else will return false
 	 */
 	public function fetchColumn( $table, $where = [], $fields = '*', $colNum = 0, $order = [], $cache = true ) {
 		$this->buildSelectQuery( SafeString::makeSafe( $table ), $where, $fields, $order, 1 );
@@ -215,7 +248,7 @@ class Database implements DBInterface {
 	 * Inserts into database using the prepared PDO statements
 	 *
 	 * @param string $table   This should be the table you wish to insert the values into
-	 * @param array  $records This should be the field names and values in the format of array('fieldname' => 'value', 'fieldname2' => 'value2', etc.)
+	 * @param array  $records This should be the field names and values in the format of array('fieldName' => 'value', 'fieldName2' => 'value2', etc.)
 	 *
 	 * @return boolean If data is inserted returns true else returns false
 	 */
@@ -232,9 +265,9 @@ class Database implements DBInterface {
 	 * Updates values in a database using the provide variables
 	 *
 	 * @param string $table   This should be the table you wish to update the values for
-	 * @param array  $records This should be the field names and new values in the format of array('fieldname' => 'newvalue', 'fieldname2' => 'newvalue2', etc.)
-	 * @param array  $where   Should be the field names and values you wish to update in the form of an array e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-	 * @param int    $limit   The number of results you want to return 0 is default and will update all results that match the query, else should be formated as a standard integer
+	 * @param array  $records This should be the field names and new values in the format of array('fieldName' => 'newValue', 'fieldName2' => 'newValue2', etc.)
+	 * @param array  $where   Should be the field names and values you wish to update in the form of an array e.g. array('fieldName' => 'value', 'fieldName2' => 'value2', etc).
+	 * @param int    $limit   The number of results you want to return 0 is default and will update all results that match the query, else should be formatted as a standard integer
 	 *
 	 * @return boolean Returns true if update is successful else returns false
 	 */
@@ -250,7 +283,9 @@ class Database implements DBInterface {
 	 *
 	 * @param string $table This should be the table you wish to delete the records from
 	 * @param array  $where This should be an array of for the where statement
-	 * @param int    $limit The number of results you want to return 0 is default and will delete all results that match the query, else should be formated as a standard integer
+	 * @param int    $limit The number of results you want to return 0 is default and will delete all results that match the query, else should be formatted as a standard integer
+	 *
+	 * @return boolean
 	 */
 	public function delete( $table, $where, $limit = 0 ) {
 		$this->sql = sprintf( "DELETE FROM `%s` %s%s;", SafeString::makeSafe( $table ), $this->where( $where ), $this->limit( $limit ) );
@@ -263,7 +298,7 @@ class Database implements DBInterface {
 	 * Count the number of return results
 	 *
 	 * @param string  $table The table you wish to count the result of
-	 * @param array   $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+	 * @param array   $where Should be the field names and values you wish to use as the where query e.g. array('fieldName' => 'value', 'fieldName2' => 'value2', etc).
 	 * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
 	 *
 	 * @return int Returns the number of results
@@ -294,7 +329,7 @@ class Database implements DBInterface {
 		try {
 			$this->sql = sprintf( "TRUNCATE TABLE `%s`", SafeString::makeSafe( $table ) );
 			$this->executeQuery( false );
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			$this->error( $e );
 		}
 
@@ -315,7 +350,7 @@ class Database implements DBInterface {
 	}
 
 	/**
-	 * Returns the number of rows for the last query sent (Looks a the numRows() function just added incase of habbit)
+	 * Returns the number of rows for the last query sent (Looks at the numRows() function just added in case of habit)
 	 *
 	 * @return int Returns the number of rows for the last query
 	 */
@@ -332,6 +367,15 @@ class Database implements DBInterface {
 	 */
 	public function lastInsertId( $name = null ) {
 		return $this->db->lastInsertId( $name );
+	}
+
+	/**
+	 * Return the last sql statement with parameters.
+	 *
+	 * @return string
+	 */
+	public function getLastQueryStatement() {
+		return "SQL: " . $this->sql . ":" . serialize( $this->values );
 	}
 
 	/**
@@ -372,7 +416,7 @@ class Database implements DBInterface {
 	/**
 	 * Displays the error massage which occurs
 	 *
-	 * @param \Exception $error This should be an instance of Exception
+	 * @param Exception $error This should be an instance of Exception
 	 */
 	protected function error( $error ) {
 		if ( $this->logErrors ) {
@@ -392,7 +436,7 @@ class Database implements DBInterface {
 	public function writeQueryToLog() {
 		$file    = $this->logLocation . 'queries.txt';
 		$current = file_get_contents( $file );
-		$current .= "SQL: " . $this->sql . ":" . serialize( $this->values ) . "\n";
+		$current .= $this->getLastQueryStatement() . "\n";
 		file_put_contents( $file, $current );
 	}
 
@@ -407,18 +451,18 @@ class Database implements DBInterface {
 	 * Build the SQL query but doesn't execute it
 	 *
 	 * @param string        $table  This should be the table you wish to select the values from
-	 * @param array         $where  Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
+	 * @param array         $where  Should be the field names and values you wish to use as the where query e.g. array('fieldName' => 'value', 'fieldName2' => 'value2', etc).
 	 * @param string|array  $fields This should be the records you wis to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
-	 * @param array         $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
-	 * @param integer|array $limit  The number of results you want to return 0 is default and returns all results, else should be formated either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
+	 * @param array         $order  This is the order you wish the results to be ordered in should be formatted as follows array('fieldName' => 'ASC') or array("'fieldName', 'fieldName2'" => 'DESC') so it can be done in both directions
+	 * @param integer|array $limit  The number of results you want to return 0 is default and returns all results, else should be formatted either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
 	 */
 	protected function buildSelectQuery( $table, $where = [], $fields = '*', $order = [], $limit = 0 ) {
 		if ( is_array( $fields ) ) {
-			$selectfields = [];
+			$selectFields = [];
 			foreach ( $fields as $field => $value ) {
-				$selectfields[] = sprintf( "`%s`", SafeString::makeSafe( $value ) );
+				$selectFields[] = sprintf( "`%s`", SafeString::makeSafe( $value ) );
 			}
-			$fieldList = implode( ', ', $selectfields );
+			$fieldList = implode( ', ', $selectFields );
 		} else {
 			$fieldList = '*';
 		}
@@ -447,11 +491,13 @@ class Database implements DBInterface {
 			$this->query->execute();
 			unset( $this->values );
 			$this->values = [];
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			unset( $this->values );
 			$this->values = [];
 			$this->error( $e );
 		}
+
+		return false; // This forces the code to pull from the DB
 	}
 
 	/**
@@ -463,12 +509,14 @@ class Database implements DBInterface {
 	 */
 	protected function where( $where ) {
 		if ( is_array( $where ) && ! empty( $where ) ) {
-			$wherefields = [];
+			$whereFields = [];
+
 			foreach ( $where as $field => $value ) {
-				$wherefields[] = $this->formatValues( $field, $value );
+				$whereFields[] = $this->formatValues( $field, $value );
 			}
-			if ( ! empty( $wherefields ) ) {
-				return " WHERE " . implode( ' AND ', $wherefields );
+
+			if ( ! empty( $whereFields ) ) {
+				return " WHERE " . implode( ' AND ', $whereFields );
 			}
 		}
 
@@ -478,18 +526,19 @@ class Database implements DBInterface {
 	/**
 	 * Sets the order sting for the SQL query based on an array or string
 	 *
-	 * @param array|string $order This should be either set to array('fieldname' => 'ASC/DESC') or RAND()
+	 * @param array|string $order This should be either set to array('fieldName' => 'ASC/DESC') or RAND()
 	 *
 	 * @return string|false If the SQL query has an valid order by will return a string else returns false
 	 */
 	protected function orderBy( $order ) {
 		if ( is_array( $order ) && ! empty( array_filter( $order ) ) ) {
 			$string = [];
-			foreach ( $order as $fieldorder => $fieldvalue ) {
-				if ( ! empty( $fieldorder ) && ! empty( $fieldvalue ) ) {
-					$string[] = sprintf( "`%s` %s", SafeString::makeSafe( $fieldorder ), strtoupper( SafeString::makeSafe( $fieldvalue ) ) );
-				} elseif ( $fieldvalue === 'RAND()' ) {
-					$string[] = $fieldvalue;
+
+			foreach ( $order as $fieldOrder => $fieldValue ) {
+				if ( ! empty( $fieldOrder ) && ! empty( $fieldValue ) ) {
+					$string[] = sprintf( "`%s` %s", SafeString::makeSafe( $fieldOrder ), strtoupper( SafeString::makeSafe( $fieldValue ) ) );
+				} elseif ( $fieldValue === 'RAND()' ) {
+					$string[] = $fieldValue;
 				}
 			}
 
@@ -543,7 +592,6 @@ class Database implements DBInterface {
 
 		return false;
 	}
-
 
 	/**
 	 * Set the cache with a key and value
