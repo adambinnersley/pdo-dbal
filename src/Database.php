@@ -15,6 +15,14 @@ use PDOStatement;
  * @version PDO Database Class
  */
 class Database implements DBInterface {
+	/* @var null|string */
+	protected $charset = null;
+
+	/* @var null|string */
+	protected $collation = null;
+
+	/*  @var int */
+	protected $defaultCacheTime = 21600; // 6 Hours
 
 	/* @var PDO */
 	protected $db;
@@ -109,6 +117,95 @@ class Database implements DBInterface {
 	}
 
 	/**
+	 * Return the last charset that was set
+	 *
+	 * @return string|null
+	 */
+	public function getCharset() {
+		if ( $this->charset == null ) {
+			// We didn't specify one so we need to ask the DB
+			$result = $this->query( "SELECT CHARSET('')" );
+			if ( $result ) {
+				$this->charset = $result[0]['CHARSET(\'\')'];
+			}
+		}
+
+		return $this->charset;
+	}
+
+	/**
+	 * Return the last collation that was set
+	 *
+	 * @return string|null
+	 */
+	public function getCollation() {
+		if ( $this->collation == null ) {
+			// We didn't specify one so we need to ask the DB
+			$result = $this->query( "SELECT COLLATION('')" );
+			if ( $result ) {
+				$this->collation = $result[0]['COLLATION(\'\')'];
+			}
+		}
+
+		return $this->collation;
+	}
+
+	/**
+	 * Return the default cache time
+	 *
+	 * @return int
+	 */
+	public function getDefaultCacheTime() {
+		return $this->defaultCacheTime;
+	}
+
+	/**
+	 * Enables the caching and set the caching object to the one provided
+	 *
+	 * @param CacheInterface|bool $caching This should be class of the type of caching you are using
+	 *
+	 * @return $this
+	 */
+	public function setCaching( CacheInterface $caching ) {
+		if ( is_object( $caching ) ) {
+			$this->cacheObj     = $caching;
+			$this->cacheEnabled = true;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Set the charset and collation for the connection
+	 *
+	 * @param string      $charset
+	 * @param string|null $collation
+	 */
+	public function setCharset( $charset, $collation = null ) {
+		$this->charset = $charset;
+		$query         = "SET NAMES ?";
+		$params        = [ $this->charset ];
+
+		if ( $collation != null ) {
+			$this->collation = $collation;
+
+			$query    .= " COLLATE ?";
+			$params[] = $this->collation;
+		}
+
+		$this->query( $query, $params );
+	}
+
+	/**
+	 * Set the default cache time for the connection
+	 *
+	 * @param int $defaultCacheTime
+	 */
+	public function setDefaultCacheTime( $defaultCacheTime ) {
+		$this->defaultCacheTime = $defaultCacheTime;
+	}
+
+	/**
 	 * Connect to the database using PDO connection
 	 *
 	 * @param string  $username   This should be the username for the chosen database
@@ -132,20 +229,6 @@ class Database implements DBInterface {
 			);
 			$this->db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		}
-	}
-
-	/**
-	 * Enables the caching and set the caching object to the one provided
-	 *
-	 * @param object $caching This should be class of the type of caching you are using
-	 */
-	public function setCaching( $caching ) {
-		if ( is_object( $caching ) ) {
-			$this->cacheObj     = $caching;
-			$this->cacheEnabled = true;
-		}
-
-		return $this;
 	}
 
 	/**
@@ -601,7 +684,7 @@ class Database implements DBInterface {
 	 */
 	public function setCache( $key, $value ) {
 		if ( $this->cacheEnabled ) {
-			$this->cacheObj->save( $key, $value );
+			$this->cacheObj->save( $key, $value, $this->defaultCacheTime );
 		}
 	}
 
@@ -620,6 +703,24 @@ class Database implements DBInterface {
 
 			return $this->cacheValue;
 		}
+	}
+
+	/**
+	 * Delete the cache results for a given key
+	 *
+	 * @param string $key   The unique key to check for stored variables
+	 * @param bool   $force Over-ride cacheEnabled key and attempt to remove cache.
+	 *
+	 * @return boolean Returns true on success or false on failure
+	 */
+	public function deleteCache( $key, bool $force = false ) {
+		if ( ! $this->cacheEnabled ) {
+			if ( $force !== true ) {
+				return false;
+			}
+		}
+
+		return $this->cacheObj->delete( $key );
 	}
 
 	/**
