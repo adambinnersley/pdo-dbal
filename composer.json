@@ -11,12 +11,9 @@
             "email": "abinnersley@gmail.com"
         }
     ],
-    "require": {
-        "php": ">=5.3.0"
-    },
     "require-dev": {
-        "php-coveralls/php-coveralls": "^2.0",
-        "phpunit/phpunit": "^8.1"
+        "php-coveralls/php-coveralls": "^2.4",
+        "phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-4": {
