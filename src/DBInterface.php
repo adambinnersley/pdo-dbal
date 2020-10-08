@@ -1,7 +1,8 @@
 <?php
 namespace DBAL;
 
-interface DBInterface{
+interface DBInterface
+{
     public function query($sql);
     public function select($table);
     public function selectAll($table);

@@ -3,13 +3,15 @@ namespace DBAL\Tests\Caching;
 
 use DBAL\Caching\XcacheCache;
 
-class XcacheCacheTest extends CacheTest{
+class XcacheCacheTest extends CacheTest
+{
     
     /**
      * @covers DBAL\Caching\XcacheCache
      */
-    public function setUp(): void {
-        if(!extension_loaded('xcache')) {
+    public function setUp(): void
+    {
+        if (!extension_loaded('xcache')) {
             $this->markTestSkipped(
                 'The XCache extension is not available.'
             );
@@ -17,5 +19,4 @@ class XcacheCacheTest extends CacheTest{
         $this->cache = new XcacheCache();
         parent::setUp();
     }
-    
 }

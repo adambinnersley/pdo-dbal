@@ -6,7 +6,8 @@ use DBAL\Database;
 use DBAL\Caching\RedisCache;
 use DBAL\Caching\MemcachedCache;
 
-class DatabaseTest extends TestCase{
+class DatabaseTest extends TestCase
+{
     public $db;
     
     protected $test_table = 'test_table';
@@ -16,14 +17,14 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      */
-    public function setUp(): void {
+    public function setUp(): void
+    {
         $this->connectToLiveDB();
-        if(!$this->db->isConnected()){
+        if (!$this->db->isConnected()) {
             $this->markTestSkipped(
                 'No local database connection is available'
             );
-        }
-        else{
+        } else {
             $this->db->query("DROP TABLE IF EXISTS `{$this->test_table}`;");
             $this->db->query("CREATE TABLE `{$this->test_table}` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -41,7 +42,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::__destruct
      * @covers \DBAL\Database::closeDatabase
      */
-    public function tearDown(): void {
+    public function tearDown(): void
+    {
         $this->db = null;
     }
     
@@ -49,7 +51,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::connectToServer
      * @covers \DBAL\Database::isConnected
      */
-    public function testConnect(){
+    public function testConnect()
+    {
         $this->assertTrue($this->db->isConnected());
     }
     
@@ -57,7 +60,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::__destruct
      * @covers \DBAL\Database::closeDatabase
      */
-    public function testCloseDatabaseConnection(){
+    public function testCloseDatabaseConnection()
+    {
         $this->assertTrue($this->db->isConnected());
         $this->assertObjectHasAttribute('sql', $this->db);
         $this->db = null;
@@ -71,7 +75,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::isConnected
      * @covers \DBAL\Database::error
      */
-    public function testConnectFailure(){
+    public function testConnectFailure()
+    {
         $db = new Database('localhost', 'wrong_username', 'incorrect_password', 'non_existent_db');
         $this->assertFalse($db->isConnected());
         $this->connectToLiveDB();
@@ -80,7 +85,8 @@ class DatabaseTest extends TestCase{
     /**
      * @covers \DBAL\Database::query
      */
-    public function testQuery(){
+    public function testQuery()
+    {
         // Insert a couple of test vales
         $this->db->insert($this->test_table, array('name' => 'My Name', 'text_field' => 'Hello World', 'number_field' => rand(1, 1000)));
         $this->db->insert($this->test_table, array('name' => 'Inigo Montoya', 'text_field' => 'You killed my father, prepare to die', 'number_field' => rand(1, 1000)));
@@ -103,13 +109,14 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testSelect(){
-       $simpleSelect = $this->db->select($this->test_table, array('id' => array('>', 1)), '*', array('id' => 'ASC'));
-       $this->assertArrayHasKey('name', $simpleSelect);
-       $this->assertFalse($this->db->select($this->test_table, array('id' => 'IS NULL'), '*', array('id' => 'ASC')));
-       $this->assertArrayHasKey('name', $this->db->select($this->test_table, array('id' => 'IS NOT NULL'), array('id', 'name'), array('id' => 'ASC')));
-       $between = $this->db->select($this->test_table, array('id' => array('BETWEEN' => array(2, 3))), '*', array('id' => 'ASC'));
-       $this->assertEquals(2, $between['id']);
+    public function testSelect()
+    {
+        $simpleSelect = $this->db->select($this->test_table, array('id' => array('>', 1)), '*', array('id' => 'ASC'));
+        $this->assertArrayHasKey('name', $simpleSelect);
+        $this->assertFalse($this->db->select($this->test_table, array('id' => 'IS NULL'), '*', array('id' => 'ASC')));
+        $this->assertArrayHasKey('name', $this->db->select($this->test_table, array('id' => 'IS NOT NULL'), array('id', 'name'), array('id' => 'ASC')));
+        $between = $this->db->select($this->test_table, array('id' => array('BETWEEN' => array(2, 3))), '*', array('id' => 'ASC'));
+        $this->assertEquals(2, $between['id']);
     }
     
     /**
@@ -127,14 +134,15 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testSelectAll(){
+    public function testSelectAll()
+    {
         $this->assertEquals(1, $this->db->numRows());
         $selectAll = $this->db->selectAll($this->test_table);
         $this->assertGreaterThan(1, $this->db->numRows());
         $this->assertArrayHasKey('id', $selectAll[0]);
         $this->db->selectAll($this->test_table, array(), '*', array(), 1);
         $this->assertEquals(1, $this->db->rowCount());
-        for($i = 1; $i <= 200; $i++){
+        for ($i = 1; $i <= 200; $i++) {
             // Insert some more values for testing
             $this->db->insert($this->test_table, array('name' => 'Name '.$i, 'text_field' => 'TextField'.$i, 'number_field' => rand(1, 1000)));
         }
@@ -157,7 +165,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testSelectFailure(){
+    public function testSelectFailure()
+    {
         $this->assertFalse($this->db->selectAll($this->test_table, array('id' => 100)));
         $this->assertFalse($this->db->selectAll('unknown_table'));
     }
@@ -174,7 +183,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testFetchColumn(){
+    public function testFetchColumn()
+    {
         $this->assertEquals('Inigo Montoya', $this->db->fetchColumn($this->test_table, array('id' => 2), '*', 1));
     }
     
@@ -190,7 +200,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testFetchColumnFailure(){
+    public function testFetchColumnFailure()
+    {
         $this->assertFalse($this->db->fetchColumn($this->test_table, array('id' => 2), '*', 6));
     }
 
@@ -202,7 +213,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::executeQuery
      * @covers \DBAL\Database::bindValues
      */
-    public function testInsert(){
+    public function testInsert()
+    {
         $this->assertTrue($this->db->insert($this->test_table, array('name' => 'Third User', 'text_field' => 'Helloooooo', 'number_field' => rand(1, 1000))));
     }
     
@@ -214,8 +226,9 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::error
      */
-    public function testInsertFailure(){
-        $this->assertFalse($this->db->insert($this->test_table, array('id' => 3, 'name' => 'Third User', 'text_field' => NULL, 'number_field' => rand(1, 1000))));
+    public function testInsertFailure()
+    {
+        $this->assertFalse($this->db->insert($this->test_table, array('id' => 3, 'name' => 'Third User', 'text_field' => null, 'number_field' => rand(1, 1000))));
     }
     
     /**
@@ -231,7 +244,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testUpdate(){
+    public function testUpdate()
+    {
         $this->assertTrue($this->db->update($this->test_table, array('text_field' => 'Altered text', 'number_field' => rand(1, 1000)), array('id' => 1)));
     }
     
@@ -249,7 +263,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testUpdateFailure(){
+    public function testUpdateFailure()
+    {
         $this->assertFalse($this->db->update($this->test_table, array('number_field' => 256), array('id' => 1)));
     }
     
@@ -265,7 +280,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testDelete(){
+    public function testDelete()
+    {
         $this->assertTrue($this->db->delete($this->test_table, array('id' => array('>=', 2))));
     }
     
@@ -281,22 +297,25 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Modifiers\Operators::isOperatorPrepared
      * @covers \DBAL\Modifiers\SafeString::makeSafe
      */
-    public function testDeleteFailure(){
+    public function testDeleteFailure()
+    {
         $this->assertFalse($this->db->delete($this->test_table, array('id' => 3)));
     }
     
     /**
      * @covers \DBAL\Database::count
      * @covers \DBAL\Database::executeQuery
-     */    
-    public function testCount(){
+     */
+    public function testCount()
+    {
         $this->assertEquals(2, $this->db->count($this->test_table));
     }
     
     /**
      * @covers \DBAL\Database::lastInsertID
      */
-    public function testLastInsertID(){
+    public function testLastInsertID()
+    {
         $this->testInsert();
         $this->assertEquals(3, $this->db->lastInsertID());
     }
@@ -304,7 +323,8 @@ class DatabaseTest extends TestCase{
     /**
      * @covers \DBAL\Database::serverVersion
      */
-    public function testServerVersion(){
+    public function testServerVersion()
+    {
         $this->assertGreaterThan(5, $this->db->serverVersion());
         $this->assertContains('.', $this->db->serverVersion());
     }
@@ -315,7 +335,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Caching\RedisCache::__construct
      * @covers \DBAL\Caching\RedisCache::connect
      */
-    public function testSetCaching(){
+    public function testSetCaching()
+    {
         if (extension_loaded('redis')) {
             $caching = new RedisCache();
             $caching->connect('127.0.0.1', 6379);
@@ -331,7 +352,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Database::bindValues
      * @covers \DBAL\Database::numRows
      */
-    public function testTruncate(){
+    public function testTruncate()
+    {
         $this->db->truncate($this->test_table);
         $this->assertEquals(0, $this->db->count($this->test_table));
         $this->assertFalse($this->db->truncate('any_table'));
@@ -340,7 +362,8 @@ class DatabaseTest extends TestCase{
     /**
      * @covers \DBAL\Database::setLogLocation
      */
-    public function testChangeLogLocation(){
+    public function testChangeLogLocation()
+    {
         $this->assertObjectHasAttribute('sql', $this->db->setLogLocation('test/logs/'));
         $this->assertObjectHasAttribute('sql', $this->db->setLogLocation(1));
         $this->assertObjectHasAttribute('sql', $this->db->setLogLocation(false));
@@ -355,7 +378,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Caching\RedisCache::save
      * @covers \DBAL\Caching\RedisCache::fetch
      */
-    public function testRedisSetCache(){
+    public function testRedisSetCache()
+    {
         $loaded = false;
         if (extension_loaded('redis')) {
             $caching = new RedisCache();
@@ -364,12 +388,11 @@ class DatabaseTest extends TestCase{
             $this->db->setCache('cache_status', 'Success');
             $loaded = ($this->db->getCache('cache_status') === 'Success' ? true : false);
         }
-        if($loaded === true) {
+        if ($loaded === true) {
             $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
             $this->assertEquals('Hello', $this->db->getCache('mykey'));
             $this->assertEmpty($this->db->getCache('another_key_name'));
-        }
-        else{
+        } else {
             $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
             $this->assertFalse($this->db->getCache('mykey'));
             $this->assertFalse($this->db->getCache('another_key_name'));
@@ -386,7 +409,8 @@ class DatabaseTest extends TestCase{
      * @covers \DBAL\Caching\MemcachedCache::save
      * @covers \DBAL\Caching\MemcachedCache::fetch
      */
-    public function testMemcachedSetCache(){
+    public function testMemcachedSetCache()
+    {
         $loaded = false;
         if (extension_loaded('memcached')) {
             $caching = new MemcachedCache();
@@ -395,19 +419,19 @@ class DatabaseTest extends TestCase{
             $this->db->setCache('cache_status', 'Success');
             $loaded = ($this->db->getCache('cache_status') === 'Success' ? true : false);
         }
-        if($loaded === true) {
+        if ($loaded === true) {
             $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
             $this->assertEquals('Hello', $this->db->getCache('mykey'));
             $this->assertEmpty($this->db->getCache('another_key_name'));
-        }
-        else{
+        } else {
             $this->assertEmpty($this->db->setCache('mykey', 'Hello'));
             $this->assertFalse($this->db->getCache('mykey'));
             $this->assertFalse($this->db->getCache('another_key_name'));
         }
     }
     
-    protected function connectToLiveDB(){
+    protected function connectToLiveDB()
+    {
         $this->db = new Database($GLOBALS['HOSTNAME'], $GLOBALS['USERNAME'], $GLOBALS['PASSWORD'], $GLOBALS['DATABASE'], '127.0.0.1', false, true, $GLOBALS['DRIVER']);
     }
 }

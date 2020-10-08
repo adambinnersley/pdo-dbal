@@ -2,8 +2,9 @@
 
 namespace DBAL\Modifiers;
 
-class Operators {
-    CONST OPERATORS = array(
+class Operators
+{
+    const OPERATORS = array(
         '>' => array(
             'format' => '> ?',
             'prepared' => true
@@ -63,8 +64,11 @@ class Operators {
      * @param string $value This should be the operator value
      * @return string The string to add to the database will be added
      */
-    public static function getOperatorFormat($value){
-        if(array_key_exists(strtoupper(strval($value)), self::OPERATORS)){return self::OPERATORS[strtoupper($value)]['format'];}
+    public static function getOperatorFormat($value)
+    {
+        if (array_key_exists(strtoupper(strval($value)), self::OPERATORS)) {
+            return self::OPERATORS[strtoupper($value)]['format'];
+        }
         return '= ?';
     }
     
@@ -73,17 +77,21 @@ class Operators {
      * @param string $operator This should be the operator value
      * @return boolean If the operator exists in the array will return true else returns false
      */
-    public static function isOperatorValid($operator){
-        if(array_key_exists(strtoupper(strval($operator)), self::OPERATORS)){return true;}
+    public static function isOperatorValid($operator)
+    {
+        if (array_key_exists(strtoupper(strval($operator)), self::OPERATORS)) {
+            return true;
+        }
         return false;
     }
     
     /**
-     * Checks to see if a prepared statement value should be added 
+     * Checks to see if a prepared statement value should be added
      * @param string $value This should be the operator value
      * @return boolean If the operator should be prepared returns true else returns false
      */
-    public static function isOperatorPrepared($value){
+    public static function isOperatorPrepared($value)
+    {
         return self::OPERATORS[strtoupper(strval($value))]['prepared'];
     }
 }

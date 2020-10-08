@@ -3,7 +3,8 @@ namespace DBAL\Tests\Caching;
 
 use DBAL\Caching\MemcacheCache;
 
-class MemcacheCacheTest extends CacheTest{
+class MemcacheCacheTest extends CacheTest
+{
     
     protected $host = '127.0.0.1';
     protected $port = 11211;
@@ -11,8 +12,9 @@ class MemcacheCacheTest extends CacheTest{
     /**
      * @covers DBAL\Caching\MemcacheCache
      */
-    public function setUp(): void {
-        if(!extension_loaded('memcache')) {
+    public function setUp(): void
+    {
+        if (!extension_loaded('memcache')) {
             $this->markTestSkipped(
                 'The memcache extension is not available.'
             );
@@ -20,5 +22,4 @@ class MemcacheCacheTest extends CacheTest{
         $this->cache = new MemcacheCache();
         parent::setUp();
     }
-    
 }

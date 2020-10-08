@@ -3,7 +3,8 @@ namespace DBAL\Tests\Caching;
 
 use DBAL\Caching\RedisCache;
 
-class RedisCacheTest extends CacheTest{
+class RedisCacheTest extends CacheTest
+{
     
     protected $port = 6379;
     
@@ -14,7 +15,8 @@ class RedisCacheTest extends CacheTest{
      * @covers \DBAL\Caching\RedisCache::save
      * @covers \DBAL\Caching\RedisCache::fetch
      */
-    public function setUp(): void {
+    public function setUp(): void
+    {
         $success = false;
         $this->cache = new RedisCache();
         $this->cache->connect('127.0.0.1', $this->port);
@@ -24,9 +26,8 @@ class RedisCacheTest extends CacheTest{
                 parent::setUp();
             }
         }
-        if($success !== true){
+        if ($success !== true) {
             $this->markTestSkipped('Redis extension may not be loaded');
         }
     }
-    
 }

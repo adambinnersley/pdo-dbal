@@ -7,14 +7,16 @@ use Exception;
 /**
  * @codeCoverageIgnore
  */
-class MemcacheCache implements CacheInterface{
+class MemcacheCache implements CacheInterface
+{
     
     protected $cache;
 
     /**
      * MemcacheCache constructor
      */
-    public function __construct(){
+    public function __construct()
+    {
         if (!extension_loaded('memcache')) {
             throw new Exception('Memcache extension is not loaded');
         }
@@ -24,7 +26,8 @@ class MemcacheCache implements CacheInterface{
     /**
      * MemcacheCache destructor closes the connection
      */
-    public function __destruct(){
+    public function __destruct()
+    {
         if (is_object($this->cache)) {
             $this->cache->close();
         }
@@ -37,11 +40,11 @@ class MemcacheCache implements CacheInterface{
      * @param boolean $persistent If you want this connection to be persistent set to true else set to false
      * @return $this
      */
-    public function connect($host, $port, $persistent = false){
-        if($persistent === false){
+    public function connect($host, $port, $persistent = false)
+    {
+        if ($persistent === false) {
             $this->cache->connect($host, intval($port));
-        }
-        else{
+        } else {
             $this->cache->pconnect($host, intval($port));
         }
         return $this;
@@ -54,7 +57,8 @@ class MemcacheCache implements CacheInterface{
      * @param boolean $persistent If you want this connection to be persistent set to true else set to false
      * @return $this
      */
-    public function addServer($host, $port, $persistent = true){
+    public function addServer($host, $port, $persistent = true)
+    {
         $this->cache->addServer($host, intval($port), $persistent);
         return $this;
     }
@@ -66,18 +70,20 @@ class MemcacheCache implements CacheInterface{
      * @param int $time How long should the value be stored for in seconds (0 = never expire) (max set value = 2592000 (30 Days))
      * @return boolean Returns true if successfully added or false on failure
      */
-    public function save($key, $value, $time = 0){
+    public function save($key, $value, $time = 0)
+    {
         return $this->cache->add($key, $value, 0, intval($time));
     }
     
     /**
-     * Replaces a stored value for a given key 
+     * Replaces a stored value for a given key
      * @param string $key This should be the key for the value you wish to replace
      * @param mixed $value The new value that you wish to give to that key
      * @param int $time How long should the value be stored for in seconds (0 = never expire) (max set value = 2592000 (30 Days))
      * @return boolean Returns true if successfully replaced or false on failure
      */
-    public function replace($key, $value, $time = 0){
+    public function replace($key, $value, $time = 0)
+    {
         return $this->cache->replace($key, $value, 0, intval($time));
     }
     
@@ -86,7 +92,8 @@ class MemcacheCache implements CacheInterface{
      * @param string $key This should be the unique query key to get the value
      * @return mixed The store value will be returned
      */
-    public function fetch($key){
+    public function fetch($key)
+    {
         return $this->cache->get($key);
     }
     
@@ -95,7 +102,8 @@ class MemcacheCache implements CacheInterface{
      * @param string $key This should be the key that you wish to delete the value for
      * @return boolean Returns true on success or false on failure
      */
-    public function delete($key){
+    public function delete($key)
+    {
         return $this->cache->delete($key);
     }
     
@@ -103,7 +111,8 @@ class MemcacheCache implements CacheInterface{
      * Deletes all values from the server
      * @return boolean Returns true on success or false on failure
      */
-    public function deleteAll(){
+    public function deleteAll()
+    {
         return $this->cache->flush();
     }
 }
