@@ -50,7 +50,7 @@ class Modifier
      */
     public static function isRequiredNumeric($variable)
     {
-        if (!empty(trim($variable)) && is_numeric($variable)) {
+        if (isset($variable) && is_numeric($variable)) {
             return true;
         }
         return false;
