@@ -32,7 +32,7 @@ class RedisCache implements CacheInterface
     /**
      * Connect to a server
      * @param string $host This should be the host name or IP address you want to connect to
-     * @param int $port The port number where Memcache can be accessed
+     * @param int $port The port number where Redis can be accessed
      * @param boolean $persistent If you want this connection to be persistent set to true else set to false
      * @return $this
      */
@@ -44,8 +44,8 @@ class RedisCache implements CacheInterface
     
     /**
      * Add a server to connection pool
-     * @param string $host This should be the host name or IP address you want to add to the Memcache pool
-     * @param int $port The port number where Memcache can be accessed
+     * @param string $host This should be the host name or IP address you want to add to the Redis pool
+     * @param int $port The port number where Redis can be accessed
      * @param boolean $persistent If you want this connection to be persistent set to true else set to false
      * @return $this
      */
@@ -69,7 +69,10 @@ class RedisCache implements CacheInterface
      */
     public function save($key, $value, $time = 0)
     {
-        return $this->cache->set($key, $value, intval($time));
+        if(!is_object($value) && !empty($value)){
+            return $this->cache->set($key, json_encode($value), (is_int($time) && $time > 0 ? $time : false));
+        }
+        return false;
     }
     
     
@@ -82,7 +85,7 @@ class RedisCache implements CacheInterface
      */
     public function replace($key, $value, $time = 0)
     {
-        return $this->save($key, $value, $time);
+        return $this->save($key, json_encode($value), (is_int($time) && $time > 0 ? $time : false));
     }
     
     /**
@@ -92,7 +95,11 @@ class RedisCache implements CacheInterface
      */
     public function fetch($key)
     {
-        return $this->cache->get($key);
+        $data = $this->cache->get($key);
+        if($data){
+            return json_decode($data, true);
+        }
+        return false;
     }
     
     /**
