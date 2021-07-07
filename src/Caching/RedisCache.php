@@ -70,7 +70,7 @@ class RedisCache implements CacheInterface
     public function save($key, $value, $time = 0)
     {
         if(!is_object($value) && !empty($value)){
-            return $this->cache->set($key, json_encode($value), (is_int($time) && $time > 0 ? $time : false));
+            return $this->cache->set($key, json_encode($value), (is_int($time) && $time > 0 ? $time : null));
         }
         return false;
     }
@@ -85,7 +85,7 @@ class RedisCache implements CacheInterface
      */
     public function replace($key, $value, $time = 0)
     {
-        return $this->save($key, json_encode($value), (is_int($time) && $time > 0 ? $time : false));
+        return $this->save($key, json_encode($value), $time);
     }
     
     /**
