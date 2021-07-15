@@ -125,6 +125,7 @@ class Database implements DBInterface
      * This query function is used for more advanced SQL queries for which non of the other methods fit
      * @param string $sql This should be the SQL query which you wish to run
      * @param array $variables This should be an array of values to execute as the values in a prepared statement
+     * @param boolean|int $cache If the query should be cached or loaded from cache set to true else set to false also can set the amount of seconds before the cache expiry as a int
      * @return array|boolean Returns array of results for the query that has just been run if select or returns true and false if executed successfully or not
      */
     public function query($sql, $variables = [], $cache = true)
@@ -145,7 +146,7 @@ class Database implements DBInterface
                 if (strpos($this->sql, 'SELECT') !== false) {
                     $result = $this->query->fetchAll(PDO::FETCH_ASSOC);
                     if ($cache && $this->cacheEnabled) {
-                        $this->setCache($this->key, $result);
+                        $this->setCache($this->key, $result, $cache);
                     }
                 }
                 return $result;
@@ -161,7 +162,7 @@ class Database implements DBInterface
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
      * @param string|array $fields This should be the records you wish to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
-     * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
+     * @param boolean|int $cache If the query should be cached or loaded from cache set to true else set to false also can set the amount of seconds before the cache expiry as a int
      * @return array Returns a single table record as the standard array when running SQL queries
      */
     public function select($table, $where = [], $fields = '*', $order = [], $cache = true)
@@ -176,7 +177,7 @@ class Database implements DBInterface
      * @param string|array $fields This should be the records you wish to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param array|string $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC')
      * @param integer|array $limit The number of results you want to return 0 is default and returns all results, else should be formatted either as a standard integer or as an array as the start and end values e.g. array(0 => 150)
-     * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
+     * @param boolean|int $cache If the query should be cached or loaded from cache set to true else set to false also can set the amount of seconds before the cache expiry as a int
      * @return array Returns a multidimensional array with the chosen fields from the table
      */
     public function selectAll($table, $where = [], $fields = '*', $order = [], $limit = 0, $cache = true)
@@ -190,7 +191,7 @@ class Database implements DBInterface
                 $result = $this->query->fetchAll(PDO::FETCH_ASSOC);
             }
             if ($cache && $this->cacheEnabled) {
-                $this->setCache($this->key, $result);
+                $this->setCache($this->key, $result, $cache);
             }
         }
         return $result ? $result : false;
@@ -203,7 +204,7 @@ class Database implements DBInterface
      * @param array $fields This should be the records you wish to select from the table. It should be either set as '*' which is the default or set as an array in the following format array('field', 'field2', 'field3', etc).
      * @param int $colNum This should be the column number you wish to get (starts at 0)
      * @param array $order This is the order you wish the results to be ordered in should be formatted as follows array('fieldname' => 'ASC') or array("'fieldname', 'fieldname2'" => 'DESC') so it can be done in both directions
-     * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
+     * @param boolean|int $cache If the query should be cached or loaded from cache set to true else set to false also can set the amount of seconds before the cache expiry as a int
      * @return mixed If a result is found will return the value of the column given else will return false
      */
     public function fetchColumn($table, $where = [], $fields = '*', $colNum = 0, $order = [], $cache = true)
@@ -213,7 +214,7 @@ class Database implements DBInterface
         if (!$result) {
             $result = $this->query->fetchColumn(intval($colNum));
             if ($cache && $this->cacheEnabled) {
-                $this->setCache($this->key, $result);
+                $this->setCache($this->key, $result, $cache);
             }
         }
         return ($result ? $result : false);
@@ -266,7 +267,7 @@ class Database implements DBInterface
      * Count the number of return results
      * @param string $table The table you wish to count the result of
      * @param array $where Should be the field names and values you wish to use as the where query e.g. array('fieldname' => 'value', 'fieldname2' => 'value2', etc).
-     * @param boolean $cache If the query should be cached or loaded from cache set to true else set to false
+     * @param boolean|int $cache If the query should be cached or loaded from cache set to true else set to false also can set the amount of seconds before the cache expiry as a int
      * @return int Returns the number of results
      */
     public function count($table, $where = [], $cache = true)
@@ -278,7 +279,7 @@ class Database implements DBInterface
         if (!$result) {
             $result = $this->query->fetchColumn();
             if ($cache && $this->cacheEnabled) {
-                $this->setCache($this->key, $result);
+                $this->setCache($this->key, $result, $cache);
             }
         }
         return $result;
@@ -532,11 +533,12 @@ class Database implements DBInterface
      * Set the cache with a key and value
      * @param string $key The unique key to store the value against
      * @param mixed $value The value of the MYSQL query
+     * @param int|true $time Set the cache to the expiration seconds
      */
-    public function setCache($key, $value)
+    public function setCache($key, $value, $time = 0)
     {
         if ($this->cacheEnabled) {
-            $this->cacheObj->save($key, $value);
+            $this->cacheObj->save($key, $value, ($time === true ? 0 : intval($time)));
         }
     }
     
