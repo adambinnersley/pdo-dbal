@@ -76,7 +76,10 @@ class Modifier
      */
     public static function removeNoneNumeric($string)
     {
-        return preg_replace("/[^0-9 ]+/", "", $string);
+        if (!empty($string)) {
+            return preg_replace("/[^0-9 ]+/", "", $string);
+        }
+        return $string;
     }
     
     /**
@@ -86,7 +89,10 @@ class Modifier
      */
     public static function removeNoneAlpha($string)
     {
-        return preg_replace("/[^a-zA-Z ]+/", "", $string);
+        if (!empty($string)) {
+            return preg_replace("/[^a-zA-Z ]+/", "", $string);
+        }
+        return $string;
     }
     
     /**
@@ -96,7 +102,10 @@ class Modifier
      */
     public static function removeNoneAlphaNumeric($string)
     {
-        return preg_replace("/[^a-zA-Z0-9 ]+/", "", $string);
+        if (!empty($string)) {
+            return preg_replace("/[^a-zA-Z0-9 ]+/", "", $string);
+        }
+        return $string;
     }
     
     /**
