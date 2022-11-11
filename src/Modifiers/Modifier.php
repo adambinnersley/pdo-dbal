@@ -11,7 +11,7 @@ class Modifier
      */
     public static function setNullOnEmpty($variable)
     {
-        if (empty(trim($variable))) {
+        if (empty(trim($variable ? $variable : ''))) {
             return null;
         }
         return $variable;
@@ -24,7 +24,7 @@ class Modifier
      */
     public static function setZeroOnEmpty($variable)
     {
-        if (empty(trim($variable)) || (is_numeric($variable) && floatval($variable) == 0)) {
+        if (empty(trim($variable ? $variable : 0)) || (is_numeric($variable) && floatval($variable) == 0)) {
             return 0;
         }
         return $variable;
@@ -37,7 +37,7 @@ class Modifier
      */
     public static function isRequiredString($variable, $minStringLength = 2)
     {
-        if (!empty(trim($variable)) && strlen(trim($variable)) >= $minStringLength) {
+        if (!empty(trim($variable ? $variable : '')) && strlen(trim($variable ? $variable : '')) >= $minStringLength) {
             return true;
         }
         return false;
@@ -63,7 +63,7 @@ class Modifier
      */
     public static function isRequiredNonNumeric($variable)
     {
-        if (!empty(trim($variable)) && !is_numeric($variable)) {
+        if (!empty(trim($variable ? $variable : '')) && !is_numeric($variable)) {
             return true;
         }
         return false;
