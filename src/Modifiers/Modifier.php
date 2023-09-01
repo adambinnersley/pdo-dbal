@@ -35,7 +35,7 @@ class Modifier
      * @param mixed $variable This should be the variable you are checking
      * @return boolean Will return true if not empty and contains at least minimum number of characters else returns false
      */
-    public static function isRequiredString($variable, $minStringLength = 2)
+    public static function isRequiredString($variable, $minStringLength = 1)
     {
         if (!empty(trim($variable ? $variable : '')) && strlen(trim($variable ? $variable : '')) >= $minStringLength) {
             return true;
