@@ -236,6 +236,21 @@ class Database implements DBInterface
     }
     
     /**
+     * Inserts into database using the prepared PDO statements but ignore and overides existing unique keys
+     * @param string $table This should be the table you wish to insert the values into
+     * @param array $records This should be the field names and values in the format of array('fieldname' => 'value', 'fieldname2' => 'value2', etc.)
+     * @return boolean If data is inserted returns true else returns false
+     */
+    public function insertIgnore($table, $records)
+    {
+        unset($this->prepare);
+        
+        $this->sql = sprintf("INSERT IGNORE INTO `%s` (%s) VALUES (%s);", SafeString::makeSafe($table), $this->fields($records, true), implode(', ', $this->prepare));
+        $this->executeQuery(false);
+        return $this->numRows() ? true : false;
+    }
+    
+    /**
      * Updates values in a database using the provide variables
      * @param string $table This should be the table you wish to update the values for
      * @param array $records This should be the field names and new values in the format of array('fieldname' => 'newvalue', 'fieldname2' => 'newvalue2', etc.)
