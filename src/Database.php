@@ -23,6 +23,7 @@ class Database implements DBInterface
     public $displayErrors = false;
     
     protected $database;
+    private $connectionDetails = [];
     protected $cacheEnabled = false;
     protected $cacheObj;
     protected $cacheValue;
@@ -58,6 +59,7 @@ class Database implements DBInterface
     public function __construct($hostname, $username, $password, $database, $backuphost = false, $cache = false, $persistent = false, $type = 'mysql', $port = 3306, $logLocation = false, $options = [])
     {
         $this->setLogLocation($logLocation);
+        $this->connectionDetails = ['hostname' => $hostname, 'username' => $username, 'password' => $password, 'database' => $database, 'backuphost' => $backuphost, 'persistent' => $persistent, 'type' => $type, 'port' => $port, 'options' => $options];
         try {
             $this->connectToServer($username, $password, $database, $hostname, $persistent, $type, $port, $options);
         } catch (\Exception $e) {
@@ -140,20 +142,38 @@ class Database implements DBInterface
                 return $this->cacheValue;
             }
             try {
-                $this->query = $this->db->prepare($this->sql);
-                $result = $this->query->execute($variables);
-                $this->values = [];
-                if (strpos($this->sql, 'SELECT') !== false) {
-                    $result = $this->query->fetchAll(PDO::FETCH_ASSOC);
-                    if ($cache && $this->cacheEnabled) {
-                        $this->setCache($this->key, $result, $cache);
+                return $this->executeRawQuery($variables, $cache);
+            } catch (\Exception $e) {
+                if ($this->connectionLost($e) && $this->reconnect()) {
+                    try {
+                        return $this->executeRawQuery($variables, $cache);
+                    } catch (\Exception $e) {
+                        // Fall through to standard error handling with the retry failure
                     }
                 }
-                return $result;
-            } catch (\Exception $e) {
                 $this->error($e);
             }
         }
+    }
+
+    /**
+     * Prepare and execute the current raw SQL query, fetching results for selects
+     * @param array $variables This should be an array of values to execute as the values in a prepared statement
+     * @param boolean|int $cache If the query results should be cached
+     * @return array|boolean Returns array of results for a select query else returns the execution success status
+     */
+    private function executeRawQuery($variables, $cache)
+    {
+        $this->query = $this->db->prepare($this->sql);
+        $result = $this->query->execute($variables);
+        $this->values = [];
+        if (strpos($this->sql, 'SELECT') !== false) {
+            $result = $this->query->fetchAll(PDO::FETCH_ASSOC);
+            if ($cache && $this->cacheEnabled) {
+                $this->setCache($this->key, $result, $cache);
+            }
+        }
+        return $result;
     }
     
     /**
@@ -453,15 +473,72 @@ class Database implements DBInterface
             $this->values = [];
             return $this->cacheValue;
         }
+        $values = $this->values;
         try {
-            $this->query = $this->db->prepare($this->sql);
-            $this->bindValues($this->values);
-            $this->query->execute();
-            $this->values = [];
+            $this->executePreparedQuery($values);
         } catch (\Exception $e) {
             $this->values = [];
+            if ($this->connectionLost($e) && $this->reconnect()) {
+                try {
+                    $this->executePreparedQuery($values);
+                    return;
+                } catch (\Exception $e) {
+                    // Fall through to standard error handling with the retry failure
+                }
+            }
             $this->error($e);
         }
+    }
+
+    /**
+     * Prepare, bind and execute the current query with the given values
+     * @param array $values The values to bind to the prepared statement
+     * @return void
+     */
+    private function executePreparedQuery($values)
+    {
+        $this->query = $this->db->prepare($this->sql);
+        $this->bindValues($values);
+        $this->query->execute();
+        $this->values = [];
+    }
+
+    /**
+     * Determine if the given exception indicates the connection to the server was lost
+     * @param \Exception $error The exception raised while executing a query
+     * @return boolean True if the connection to the server was lost
+     */
+    protected function connectionLost($error)
+    {
+        $message = $error->getMessage();
+        return (stripos($message, 'server has gone away') !== false || stripos($message, 'Lost connection') !== false);
+    }
+
+    /**
+     * Attempt to re-establish a lost connection to the database server.
+     *
+     * The server drops connections that sit idle past wait_timeout (e.g.
+     * while a long-running process waits on slow external API calls);
+     * without a reconnect every subsequent query fails with
+     * "MySQL server has gone away" and the request dies.
+     * @return boolean True if a new connection was established
+     */
+    protected function reconnect()
+    {
+        if (empty($this->connectionDetails)) {
+            return false;
+        }
+        $details = $this->connectionDetails;
+        $this->closeDatabase();
+        foreach (array_filter([$details['hostname'], $details['backuphost']]) as $host) {
+            try {
+                $this->connectToServer($details['username'], $details['password'], $details['database'], $host, $details['persistent'], $details['type'], $details['port'], $details['options']);
+                return true;
+            } catch (\Exception $e) {
+                $this->db = null;
+            }
+        }
+        return false;
     }
     
     /**
