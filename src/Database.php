@@ -82,6 +82,26 @@ class Database implements DBInterface
     }
     
     /**
+     * The PDO attribute for MySQL buffered queries, on whichever PHP is running.
+     *
+     * PHP 8.4 moved the MySQL driver constants onto the Pdo\Mysql subclass and
+     * PHP 8.5 deprecates the old PDO::MYSQL_ATTR_* spellings, so a plain
+     * reference now logs a deprecation on every connection. The value is the
+     * same either way; only the name moved. class_exists() rather than a
+     * version check so this also does the right thing on a build without the
+     * mysql extension.
+     *
+     * @return int
+     */
+    protected static function mysqlBufferedQueryAttr()
+    {
+        if (class_exists('Pdo\Mysql') && defined('Pdo\Mysql::ATTR_USE_BUFFERED_QUERY')) {
+            return constant('Pdo\Mysql::ATTR_USE_BUFFERED_QUERY');
+        }
+        return PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
+    }
+
+    /**
      * Connect to the database using PDO connection
      * @param string $username This should be the username for the chosen database
      * @param string $password This should be the password for the chosen database
@@ -102,7 +122,7 @@ class Database implements DBInterface
                 $password,
                 array_merge(
                     ($persistent !== false ? array(PDO::ATTR_PERSISTENT => true) : []),
-                    ($type === 'mysql' ? array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true, PDO::ATTR_EMULATE_PREPARES => true) : []),
+                    ($type === 'mysql' ? array(self::mysqlBufferedQueryAttr() => true, PDO::ATTR_EMULATE_PREPARES => true) : []),
                     (is_array($options) ? $options : [])
                 )
             );
@@ -386,13 +406,21 @@ class Database implements DBInterface
     
     /**
      * Sets the location of the log files
-     * @param string $location This should be where you wish the logs to be stored
+     * @param string|false|null $location Where logs should be stored; false or null uses the default
      * @return $this
      */
     public function setLogLocation($location = false)
     {
-        if ($location === false) {
+        // The docblock says false, but callers pass null too (it is the natural
+        // "no preference" value), and PHP 8.1+ deprecates null into
+        // file_exists()/mkdir(). Treat every "nothing" the same way.
+        if ($location === false || $location === null || $location === '') {
             $location = dirname(__FILE__).DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR;
+        }
+        // Log file names are appended directly, so the path must end in a
+        // separator or the files land beside the directory instead of in it.
+        if (substr($location, -1) !== DIRECTORY_SEPARATOR && substr($location, -1) !== '/') {
+            $location .= DIRECTORY_SEPARATOR;
         }
         $this->logLocation = $location;
         if (!file_exists($location)) {
